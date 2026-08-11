@@ -33,6 +33,8 @@ export {
 } from './lib/outbox-state';
 export type {
   OfflineOperationSummary,
+  OfflineOutboxFeature,
+  OfflineOutboxSelector,
   OfflineOutboxState,
   OfflineScopeCounts,
   OfflineStorageHealth,

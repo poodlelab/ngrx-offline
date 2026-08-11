@@ -37,5 +37,23 @@ jobs:
       - name: Install an OIDC-capable npm CLI
         run: npm install --global npm@11.5.1
 
+      - name: Check whether this version is already published
+        id: registry
+        shell: bash
+        run: |
+          version="$(node -p "require('./dist/ngrx-offline/package.json').version")"
+          package="@poodlelab/ngrx-offline@${version}"
+          if published="$(npm view "$package" version 2>npm-view-error.log)"; then
+            echo "published=true" >> "$GITHUB_OUTPUT"
+            echo "$package is already published; skipping npm publish."
+          elif grep -q 'E404' npm-view-error.log; then
+            echo "published=false" >> "$GITHUB_OUTPUT"
+            echo "$package is not published yet."
+          else
+            cat npm-view-error.log
+            exit 1
+          fi
+
       - name: Publish alpha with provenance
+        if: steps.registry.outputs.published != 'true'
         run: npm publish dist/ngrx-offline --access public --tag alpha
