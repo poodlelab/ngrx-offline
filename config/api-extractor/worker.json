@@ -1,0 +1,7 @@
+{
+  "extends": "./base.json",
+  "mainEntryPointFilePath": "<projectFolder>/dist/ngrx-offline/types/poodlelab-ngrx-offline-worker.d.ts",
+  "apiReport": {
+    "reportFileName": "ngrx-offline-worker.api.md"
+  }
+}

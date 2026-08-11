@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../out-tsc/spec",
+    "composite": true,
+    "types": ["vitest/globals"]
+  },
+  "include": [
+    "src/**/*.ts",
+    "core/**/*.ts",
+    "indexeddb/**/*.ts",
+    "worker/**/*.ts",
+    "testing/**/*.ts"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ESNext"],
+    "noEmit": true,
+    "types": []
+  },
+  "include": [
+    "src/contracts.ts",
+    "src/entities.ts",
+    "src/env-extensions.d.ts",
+    "src/http.ts",
+    "src/index.ts",
+    "src/mutations.ts",
+    "src/workspaces.ts",
+    "worker-configuration.d.ts"
+  ]
+}

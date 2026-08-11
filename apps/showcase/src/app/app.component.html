@@ -1,0 +1,805 @@
+<a class="skip-link" href="#main-content">Skip to content</a>
+
+<div class="app-shell">
+  <aside class="sidebar" [class.sidebar--open]="mobileNavOpen()" aria-label="Primary navigation">
+    <div class="brand">
+      <span class="brand__mark" aria-hidden="true">N</span>
+      <span>
+        <strong>NgRx Offline</strong>
+        <small>Atlas Journal</small>
+      </span>
+    </div>
+
+    <nav class="main-nav">
+      <button
+        type="button"
+        [class.active]="section() === 'dashboard'"
+        (click)="navigate('dashboard')"
+      >
+        Overview
+      </button>
+      <button
+        type="button"
+        [class.active]="section() === 'workspace'"
+        (click)="navigate('workspace')"
+      >
+        Journal studio
+      </button>
+      <button type="button" [class.active]="section() === 'sync'" (click)="navigate('sync')">
+        Sync Center
+        @if (pendingCount() + blockedCount() > 0) {
+          <span class="nav-count">{{ pendingCount() + blockedCount() }}</span>
+        }
+      </button>
+      <button type="button" [class.active]="section() === 'learn'" (click)="navigate('learn')">
+        Learn
+      </button>
+    </nav>
+
+    <div class="sidebar__footer">
+      <div class="workspace-chip">
+        <span class="avatar">DL</span>
+        <span
+          ><small>Anonymous pool</small><strong>{{ shortId(workspace.workspaceId) }}</strong></span
+        >
+      </div>
+      <a href="https://github.com/poodlelab/ngrx-offline" target="_blank" rel="noreferrer">
+        GitHub
+      </a>
+    </div>
+  </aside>
+
+  @if (mobileNavOpen()) {
+    <button
+      class="scrim"
+      type="button"
+      aria-label="Close navigation"
+      (click)="mobileNavOpen.set(false)"
+    ></button>
+  }
+
+  <div class="app-column">
+    <header class="topbar">
+      <button
+        class="icon-button mobile-menu"
+        type="button"
+        aria-label="Open navigation"
+        (click)="mobileNavOpen.set(true)"
+      >
+        ☰
+      </button>
+      <div class="connection" [class.connection--offline]="!online()" role="status">
+        <span class="pulse" aria-hidden="true"></span>
+        <span>{{ online() ? 'Connected' : 'Offline' }}</span>
+        <small>{{ connectivity.simulatedOffline() ? 'simulated' : 'browser' }}</small>
+      </div>
+      <div class="topbar__actions">
+        <button
+          class="simulation-toggle"
+          type="button"
+          [attr.aria-pressed]="connectivity.simulatedOffline()"
+          (click)="setOffline(!connectivity.simulatedOffline())"
+        >
+          {{ connectivity.simulatedOffline() ? 'Restore connection' : 'Simulate offline' }}
+        </button>
+        <button
+          class="icon-button"
+          type="button"
+          aria-label="Toggle color theme"
+          (click)="toggleTheme()"
+        >
+          {{ theme() === 'light' ? '◐' : '☀' }}
+        </button>
+      </div>
+    </header>
+
+    <main id="main-content" tabindex="-1">
+      @if (section() === 'dashboard') {
+        <section class="page dashboard-page" aria-labelledby="dashboard-title">
+          <div class="hero-grid">
+            <div class="hero-copy">
+              <h1 id="dashboard-title">Build an offline travel journal with NgRx</h1>
+              <p class="hero-lede">
+                Most offline support stops at caching screens or retrying one request. Real
+                applications also need to create related records before server IDs exist. NgRx
+                Offline persists those mutations and resolves their local references during replay.
+                Application code still uses the usual NgRx actions, reducers, effects, and
+                selectors. Optimistic updates simply begin with the durable
+                <code>queued</code> action instead of <code>requested</code>.
+              </p>
+              <div class="hero-actions">
+                <button
+                  class="button button--primary"
+                  type="button"
+                  (click)="navigate('workspace')"
+                >
+                  Open journal
+                </button>
+                <button class="button button--quiet" type="button" (click)="navigate('learn')">
+                  View implementation
+                </button>
+              </div>
+            </div>
+
+            <div class="hero-visual" aria-label="Lisbon travel journal preview">
+              <figure class="journal-hero-card">
+                <img
+                  src="assets/lisbon-journal-hero.webp"
+                  alt="Painted Lisbon rooftops, tram, and travel keepsakes"
+                />
+                <figcaption>
+                  <span
+                    ><small>Day one · Lisbon</small><strong>Alfama before breakfast</strong></span
+                  >
+                  <span class="tag tag--warm">Saved offline</span>
+                </figcaption>
+              </figure>
+              <div class="sync-orbit sync-orbit--one">Memory <strong>local</strong></div>
+              <div class="sync-orbit sync-orbit--two">ID map <strong>8421</strong></div>
+            </div>
+          </div>
+
+          <div class="metrics-row">
+            <article>
+              <div>
+                <strong>{{ pendingCount() }}</strong
+                ><small>Queued operations</small>
+              </div>
+            </article>
+            <article>
+              <div>
+                <strong>{{ syncedCount() }}</strong
+                ><small>Records reconciled</small>
+              </div>
+            </article>
+            <article>
+              <div>
+                <strong>{{ blockedCount() }}</strong
+                ><small>Needs attention</small>
+              </div>
+            </article>
+            <article>
+              <div>
+                <strong>{{ hydrated() ? 'Ready' : 'Opening' }}</strong
+                ><small>Durable storage</small>
+              </div>
+            </article>
+          </div>
+
+          <div class="section-heading">
+            <div>
+              <h2>What the example covers</h2>
+            </div>
+            <button class="text-link" type="button" (click)="navigate('sync')">
+              Open Sync Center
+            </button>
+          </div>
+          <div class="feature-grid">
+            <article class="feature-card">
+              <h3>Use the usual NgRx workflow</h3>
+              <p>
+                Dispatch requested, update domain state from queued, and reconcile it from
+                succeeded.
+              </p>
+            </article>
+            <article class="feature-card">
+              <h3>Reference records created offline</h3>
+              <p>
+                Children carry typed offline references. Numeric parent IDs are resolved immediately
+                before transport.
+              </p>
+            </article>
+            <article class="feature-card">
+              <h3>Reuse one idempotency key</h3>
+              <p>
+                Stable idempotency keys make response loss safe. The API replays the first committed
+                result.
+              </p>
+            </article>
+          </div>
+        </section>
+      }
+
+      @if (section() === 'workspace') {
+        <section class="page" aria-labelledby="workspace-title">
+          <div class="page-heading">
+            <div>
+              <h1 id="workspace-title">Create related records offline</h1>
+              <p>This form creates a trip, travel day, place, three memories, and a reflection.</p>
+            </div>
+            <span class="privacy-note">Demo data only · expires automatically</span>
+          </div>
+
+          <div class="walkthrough" aria-label="Guided offline walkthrough">
+            <div [class.done]="progress() > 1">
+              <span>1</span>
+              <div>
+                <strong>Go offline</strong
+                ><small>Use DevTools Network → Offline, or the simulator above.</small>
+              </div>
+            </div>
+            <i aria-hidden="true"></i>
+            <div [class.done]="progress() > 2">
+              <span>2</span>
+              <div>
+                <strong>Write the journal</strong
+                ><small>Every record is durable before it appears below.</small>
+              </div>
+            </div>
+            <i aria-hidden="true"></i>
+            <div [class.done]="progress() > 3">
+              <span>3</span>
+              <div>
+                <strong>Reconnect</strong
+                ><small>Watch dependencies resolve in the Sync Center.</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="workspace-layout">
+            <form class="visit-form panel" (submit)="createScenario($event)">
+              <div class="panel__heading">
+                <div>
+                  <h2>Lisbon, in the margins</h2>
+                </div>
+                <span class="status-pill">Draft</span>
+              </div>
+              <label>Trip title<input name="trip" value="Lisbon in the margins" required /></label>
+              <div class="form-pair">
+                <label
+                  >Destination<input name="destination" value="Lisbon, Portugal" required
+                /></label>
+                <label
+                  >Travel date<input name="date" type="date" value="2026-09-18" required
+                /></label>
+              </div>
+              <label
+                >Travel day<input name="travelDay" value="A slow morning in Alfama" required
+              /></label>
+              <label
+                >Place visit<input name="placeVisit" value="Miradouro da Senhora do Monte" required
+              /></label>
+              <label
+                >Evening reflection<textarea name="dayReflection" rows="3">
+The city felt unhurried today—bells, tiled walls, warm custard, and the river appearing between rooftops.</textarea>
+              </label>
+              <fieldset>
+                <legend>Included child records</legend>
+                <span><b>3</b> memories</span><span><b>1</b> timestamped reflection</span>
+              </fieldset>
+              <button class="button button--primary button--full" type="submit">
+                Save day to the journal
+              </button>
+              <p class="form-footnote">
+                The queued lifecycle action fires only after IndexedDB succeeds.
+              </p>
+            </form>
+
+            <div class="panel work-preview">
+              <div class="panel__heading">
+                <div>
+                  <h2>Relationship tree</h2>
+                </div>
+                <span>{{ entities().length }} records</span>
+              </div>
+              @if (entities().length === 0) {
+                <div class="empty-state">
+                  <h3>No local work yet</h3>
+                  <p>
+                    Take the app offline and save the day. The complete relationship tree will
+                    appear here.
+                  </p>
+                </div>
+              } @else {
+                <div class="entity-tree">
+                  @for (entity of chain(); track entity.clientId; let index = $index) {
+                    <div
+                      class="entity-row"
+                      [style.--depth]="
+                        entity.kind === 'Trip'
+                          ? 0
+                          : entity.kind === 'Travel day'
+                            ? 1
+                            : entity.kind === 'Place visit'
+                              ? 2
+                              : 3
+                      "
+                    >
+                      <span class="entity-row__line" aria-hidden="true"></span>
+                      <span class="entity-avatar">{{ entity.kind.slice(0, 2) }}</span>
+                      <span class="entity-copy"
+                        ><small>{{ entity.kind }}</small
+                        ><strong>{{ entity.label }}</strong
+                        ><code>{{ shortId(entity.clientId) }}</code></span
+                      >
+                      <span
+                        class="tag"
+                        [class.tag--success]="entity.state === 'synced'"
+                        [class.tag--danger]="entity.state === 'blocked'"
+                        >{{ entity.state }}</span
+                      >
+                    </div>
+                  }
+                </div>
+                <button
+                  class="button button--quiet button--full"
+                  type="button"
+                  (click)="addDayReflection()"
+                >
+                  + Add another evening reflection
+                </button>
+              }
+            </div>
+          </div>
+        </section>
+      }
+
+      @if (section() === 'sync') {
+        <section class="page" aria-labelledby="sync-title">
+          <div class="page-heading sync-heading">
+            <div>
+              <h1 id="sync-title">Sync Center</h1>
+              <p>Inspect what is durable, what is waiting, and how each relationship resolves.</p>
+            </div>
+            <div class="heading-actions">
+              <button class="button button--quiet" type="button" (click)="resetWorkspace()">
+                Reset workspace</button
+              ><button class="button button--quiet" type="button" (click)="togglePause()">
+                {{ paused() ? 'Resume queue' : 'Pause queue' }}</button
+              ><button
+                class="button button--quiet"
+                type="button"
+                [disabled]="syncing() || paused() || pendingCount() === 0"
+                (click)="syncInWorker()"
+              >
+                Sync in worker</button
+              ><button
+                class="button button--primary"
+                type="button"
+                [disabled]="!online() || syncing() || paused()"
+                (click)="syncNow()"
+              >
+                {{ syncing() ? 'Synchronizing…' : 'Sync now' }}
+              </button>
+            </div>
+          </div>
+
+          @if (storageErrorMessage(); as message) {
+            <div class="alert alert--danger" role="alert">
+              <strong>Durable storage unavailable</strong><span>{{ message }}</span>
+            </div>
+          }
+
+          <div class="sync-summary">
+            <div>
+              <span class="summary-dot summary-dot--queued"></span
+              ><strong>{{ pendingCount() }}</strong
+              ><small>Pending / executing</small>
+            </div>
+            <div>
+              <span class="summary-dot summary-dot--blocked"></span
+              ><strong>{{ blockedCount() }}</strong
+              ><small>Blocked</small>
+            </div>
+            <div>
+              <span class="summary-dot summary-dot--done"></span><strong>{{ syncedCount() }}</strong
+              ><small>Synchronized</small>
+            </div>
+            <div class="sync-summary__connection">
+              <span>{{
+                paused()
+                  ? 'Workspace queue paused'
+                  : online()
+                    ? 'API connection available'
+                    : 'Waiting for connection'
+              }}</span
+              ><small>{{ workspace.apiBaseUrl }}</small>
+            </div>
+          </div>
+
+          <article class="panel dependency-panel">
+            <div class="panel__heading">
+              <div>
+                <h2>Local references → server IDs</h2>
+              </div>
+              <span class="legend"><i></i> resolved <i></i> local</span>
+            </div>
+            @if (chain().length === 0) {
+              <div class="empty-state empty-state--compact">
+                <p>Save a travel day to populate this graph.</p>
+              </div>
+            } @else {
+              <div class="route-map">
+                <section aria-label="Place and memory route">
+                  <span class="route-map__label">Place & memory route</span>
+                  <div class="dependency-track">
+                    @for (entity of routeChain(); track entity.clientId; let last = $last) {
+                      <div
+                        class="dependency-node"
+                        [class.dependency-node--resolved]="entity.serverId !== null"
+                      >
+                        <span class="node-kind">{{ entity.kind }}</span>
+                        <strong>{{ entity.label }}</strong>
+                        <div class="id-map">
+                          <code>{{ shortId(entity.clientId) }}</code
+                          ><span>→</span><code>{{ entity.serverId ?? 'waiting' }}</code>
+                        </div>
+                      </div>
+                      @if (!last) {
+                        <span class="dependency-arrow" aria-hidden="true">→</span>
+                      }
+                    }
+                  </div>
+                </section>
+                <section class="route-map__branch" aria-label="Reflection branch">
+                  <span class="route-map__label">Branches after Travel Day</span>
+                  <div class="dependency-track">
+                    @for (entity of reflectionChain(); track entity.clientId) {
+                      <span class="dependency-arrow dependency-arrow--branch" aria-hidden="true"
+                        >↳</span
+                      >
+                      <div
+                        class="dependency-node"
+                        [class.dependency-node--resolved]="entity.serverId !== null"
+                      >
+                        <span class="node-kind">{{ entity.kind }}</span>
+                        <strong>{{ entity.label }}</strong>
+                        <div class="id-map">
+                          <code>{{ shortId(entity.clientId) }}</code
+                          ><span>→</span><code>{{ entity.serverId ?? 'waiting' }}</code>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </section>
+              </div>
+            }
+          </article>
+
+          <div class="sync-grid">
+            <article class="panel queue-panel">
+              <div class="panel__heading">
+                <div>
+                  <h2>Operations</h2>
+                </div>
+                <span>{{ operations().length }} active</span>
+              </div>
+              @if (operations().length === 0) {
+                <div class="empty-state">
+                  <h3>Outbox is clear</h3>
+                  <p>There are no pending or blocked mutations in this workspace.</p>
+                </div>
+              } @else {
+                <div class="operation-list">
+                  @for (operation of operations(); track operation.id) {
+                    <div
+                      class="operation-card"
+                      [class.operation-card--blocked]="operation.status === 'blocked'"
+                    >
+                      <div class="operation-card__main">
+                        <span class="operation-state">{{
+                          operation.status === 'blocked'
+                            ? 'Blocked'
+                            : operation.status === 'executing'
+                              ? 'Running'
+                              : 'Queued'
+                        }}</span>
+                        <div>
+                          <small>{{ operationName(operation.kind) }}</small
+                          ><strong>{{ shortId(operation.id) }}</strong
+                          ><span>{{
+                            paused()
+                              ? 'Scope paused'
+                              : operation.nextAttemptAt === null
+                                ? 'Ready for replay'
+                                : nextAttempt(operation.nextAttemptAt)
+                          }}</span>
+                        </div>
+                      </div>
+                      <div class="operation-meta">
+                        <span>Attempt {{ operation.attempts }}</span
+                        ><span>Lane: {{ operation.lane }}</span>
+                        @if (operation.failureCode) {
+                          <code>{{ operation.failureCode }}</code>
+                        }
+                      </div>
+                      <div class="operation-actions">
+                        @if (operation.status === 'blocked') {
+                          <button type="button" (click)="retry(operation.id)">
+                            Resolve & retry
+                          </button>
+                        }
+                        <button type="button" (click)="cancel(operation.id)">Cancel</button>
+                        <button type="button" class="danger-link" (click)="discard(operation.id)">
+                          Discard
+                        </button>
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </article>
+
+            <aside class="right-stack">
+              <article class="panel failure-panel">
+                <div class="panel__heading">
+                  <div>
+                    <h2>Arm the next request</h2>
+                  </div>
+                </div>
+                <label for="failure-mode">Deterministic server response</label>
+                <select
+                  id="failure-mode"
+                  [value]="workspace.nextFailure() ?? ''"
+                  (change)="armFailure($event)"
+                >
+                  <option value="">Normal behavior</option>
+                  <option value="commit_then_disconnect">Commit, lose response</option>
+                  <option value="timeout">Timeout</option>
+                  <option value="conflict_409">409 itinerary conflict</option>
+                  <option value="precondition_412">412 precondition</option>
+                  <option value="validation_422">422 validation</option>
+                  <option value="server_error_500">500 server error</option>
+                </select>
+                <p>
+                  The control is scoped to this anonymous pool and consumed by one operation key. A
+                  blocked journal entry stays durable until you repair or discard it.
+                </p>
+              </article>
+              <article class="panel history-panel">
+                <div class="panel__heading">
+                  <div>
+                    <h2>Lifecycle history</h2>
+                  </div>
+                </div>
+                @if (history().length === 0) {
+                  <p class="muted">Lifecycle actions will appear here.</p>
+                }
+                <ol>
+                  @for (item of history(); track item.id) {
+                    <li
+                      [class.history-success]="item.tone === 'success'"
+                      [class.history-blocked]="item.tone === 'blocked'"
+                    >
+                      <i></i
+                      ><span
+                        ><strong>{{ item.label }}</strong
+                        ><small>{{ time(item.time) }}</small></span
+                      >
+                    </li>
+                  }
+                </ol>
+              </article>
+            </aside>
+          </div>
+        </section>
+      }
+
+      @if (section() === 'learn') {
+        <section class="page learn-page" aria-labelledby="learn-title">
+          <div class="page-heading">
+            <div>
+              <h1 id="learn-title">How the example works</h1>
+              <p>The definitions, provider setup, worker, and reducer used by Atlas Journal.</p>
+            </div>
+            <a
+              class="button button--quiet"
+              href="https://github.com/poodlelab/ngrx-offline/tree/main/apps/showcase/src/app"
+              target="_blank"
+              rel="noreferrer"
+              >Complete source</a
+            >
+          </div>
+
+          <aside class="alpha-notice" aria-labelledby="alpha-status-title">
+            <h2 id="alpha-status-title">Alpha status</h2>
+            <p>
+              NgRx Offline is ready for evaluation, but it is not yet recommended for production
+              use. Public APIs may change before 1.0.
+            </p>
+            <p>
+              If it solves a problem in your application, share your use case, missing requirements,
+              or API feedback in the
+              <a
+                href="https://github.com/poodlelab/ngrx-offline/issues"
+                target="_blank"
+                rel="noreferrer"
+                >GitHub issue tracker</a
+              >. Continued development toward a stable release will be guided by real-world use and
+              contributor interest.
+            </p>
+          </aside>
+
+          <div class="concept-list">
+            <article>
+              <h2>Define</h2>
+              <p>
+                Name the operation and entity, then describe the HTTP request. Tagged references are
+                discovered from the input.
+              </p>
+            </article>
+            <article>
+              <h2>Bind</h2>
+              <p>
+                Dispatch requested like any NgRx action. Reducers handle queued and succeeded to
+                update domain state.
+              </p>
+            </article>
+            <article>
+              <h2>Persist</h2>
+              <p>
+                The requested action becomes visible as queued only after its input is written to
+                IndexedDB.
+              </p>
+            </article>
+            <article>
+              <h2>Replay</h2>
+              <p>
+                After an online enqueue or reconnect, one scoped executor resolves references,
+                supplies an idempotency key, and reconciles the server result automatically.
+              </p>
+            </article>
+          </div>
+
+          <article class="lesson">
+            <div class="lesson__copy">
+              <h2>Reference a record created offline</h2>
+              <p>
+                The Travel Day input stores a typed reference to its Trip. The request resolves that
+                reference immediately before transport, after the Trip has a server ID.
+              </p>
+              <ul>
+                <li>Definitions do not depend on Angular or browser globals.</li>
+                <li>Version 1 and dependency discovery are automatic.</li>
+                <li>Conventional client and server IDs map without extra callbacks.</li>
+              </ul>
+              <a
+                href="https://github.com/poodlelab/ngrx-offline/blob/main/apps/showcase/src/app/operation-definitions.ts"
+                target="_blank"
+                rel="noreferrer"
+                >View complete definition</a
+              >
+            </div>
+            <div class="code-card">
+              <div class="code-card__bar">
+                <span>operation-definitions.ts</span
+                ><button type="button" (click)="copy('Definition', definitionSnippet)">
+                  {{ copiedSnippet() === 'Definition' ? 'Copied!' : 'Copy' }}
+                </button>
+              </div>
+              <pre><code>{{ definitionSnippet }}</code></pre>
+            </div>
+          </article>
+
+          <article class="lesson">
+            <div class="lesson__copy">
+              <h2>Configure the Angular provider</h2>
+              <p>
+                The provider registers NgRx effects, IndexedDB persistence, browser coordination,
+                connectivity, and transport. Each operation belongs to an immutable scope.
+              </p>
+              <ul>
+                <li>Payloads stay out of the outbox’s NgRx projection.</li>
+                <li>Online writes replay automatically after the durable commit.</li>
+                <li>Logout policy controls preservation or deletion by scope.</li>
+                <li>Browser coordination permits only one active executor.</li>
+              </ul>
+              <a
+                href="https://github.com/poodlelab/ngrx-offline/blob/main/apps/showcase/src/main.ts"
+                target="_blank"
+                rel="noreferrer"
+                >View application providers</a
+              >
+            </div>
+            <div class="code-card">
+              <div class="code-card__bar">
+                <span>main.ts</span
+                ><button type="button" (click)="copy('Provider', providerSnippet)">
+                  {{ copiedSnippet() === 'Provider' ? 'Copied!' : 'Copy' }}
+                </button>
+              </div>
+              <pre><code>{{ providerSnippet }}</code></pre>
+            </div>
+          </article>
+
+          <article class="lesson">
+            <div class="lesson__copy">
+              <h2>Optional service-worker replay</h2>
+              <p>
+                The optional worker uses the same definitions, IndexedDB schema, and scoped lock as
+                the foreground adapter. It writes durable receipts; Angular consumes them now or
+                after the next launch.
+              </p>
+              <ul>
+                <li>Explicit messages work without Background Sync support.</li>
+                <li>
+                  Credentials are enhanced at execution time, never stored in operation input.
+                </li>
+                <li>If the worker lacks credentials, foreground replay handles the queue later.</li>
+              </ul>
+              <a
+                href="https://github.com/poodlelab/ngrx-offline/blob/main/apps/showcase/src/offline-service-worker.ts"
+                target="_blank"
+                rel="noreferrer"
+                >View custom worker</a
+              >
+            </div>
+            <div class="code-card">
+              <div class="code-card__bar">
+                <span>offline-service-worker.ts</span
+                ><button type="button" (click)="copy('Worker', workerSnippet)">
+                  {{ copiedSnippet() === 'Worker' ? 'Copied!' : 'Copy' }}
+                </button>
+              </div>
+              <pre><code>{{ workerSnippet }}</code></pre>
+            </div>
+          </article>
+
+          <article class="lesson">
+            <div class="lesson__copy">
+              <h2>Update state after IndexedDB succeeds</h2>
+              <p>
+                Application reducers handle the binding’s queued action, not the initial requested
+                action. If IndexedDB rejects the write, the optimistic entity never appears and an
+                enqueue-failed action explains why.
+              </p>
+              <ul>
+                <li>Restore actions rebuild optimism after a reload.</li>
+                <li>Succeeded actions reconcile client and server IDs.</li>
+                <li>Blocked actions preserve user work for explicit repair.</li>
+              </ul>
+              <a
+                href="https://github.com/poodlelab/ngrx-offline/blob/main/apps/showcase/src/app/showcase.store.ts"
+                target="_blank"
+                rel="noreferrer"
+                >View domain reducer</a
+              >
+            </div>
+            <div class="code-card">
+              <div class="code-card__bar">
+                <span>showcase.store.ts</span
+                ><button type="button" (click)="copy('Reducer', reducerSnippet)">
+                  {{ copiedSnippet() === 'Reducer' ? 'Copied!' : 'Copy' }}
+                </button>
+              </div>
+              <pre><code>{{ reducerSnippet }}</code></pre>
+            </div>
+          </article>
+
+          <div class="limits-panel">
+            <div>
+              <h2>Scope and limitations</h2>
+            </div>
+            <ul>
+              <li>
+                <strong>Domain data.</strong> Your application owns domain state, reads, and cache
+                policy.
+              </li>
+              <li>
+                <strong>Store persistence.</strong> Only explicitly registered mutation inputs enter
+                the outbox.
+              </li>
+              <li>
+                <strong>Conflict handling.</strong> The library surfaces typed failures; your domain
+                decides how to repair them.
+              </li>
+              <li>
+                <strong>Server idempotency.</strong> Servers must durably store and replay results
+                for each operation key.
+              </li>
+            </ul>
+          </div>
+        </section>
+      }
+    </main>
+
+    <footer>
+      <span>NgRx Offline · MIT</span
+      ><a href="https://github.com/poodlelab/ngrx-offline" target="_blank" rel="noreferrer"
+        >Source</a
+      >
+    </footer>
+  </div>
+</div>
+
+<div class="sr-only" aria-live="polite">{{ announcement() }}</div>

@@ -1,0 +1,24 @@
+name: Feature request
+description: Propose a capability or public API change.
+title: '[Feature]: '
+labels: ['enhancement', 'needs-triage']
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Describe the user problem independently of a proposed implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Explain the desired API or behavior and include a usage example.
+    validations:
+      required: true
+  - type: textarea
+    id: guarantees
+    attributes:
+      label: Durable-data and compatibility considerations
+      description: Note effects on persistence, scopes, retries, migrations, workers, or peers.

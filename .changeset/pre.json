@@ -1,0 +1,9 @@
+{
+  "mode": "pre",
+  "tag": "alpha",
+  "initialVersions": {
+    "@poodlelab/ngrx-offline-demo-api": "0.0.0",
+    "@poodlelab/ngrx-offline": "0.0.0"
+  },
+  "changesets": ["calm-journals-simplify"]
+}

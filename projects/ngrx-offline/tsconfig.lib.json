@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../out-tsc/lib",
+    "declaration": true,
+    "declarationMap": true,
+    "composite": true,
+    "types": []
+  },
+  "include": [
+    "src/**/*.ts",
+    "core/**/*.ts",
+    "indexeddb/**/*.ts",
+    "worker/**/*.ts",
+    "testing/**/*.ts"
+  ],
+  "exclude": ["**/*.spec.ts"]
+}

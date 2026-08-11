@@ -1,0 +1,68 @@
+name: Deploy showcase
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build showcase
+    if: ${{ vars.SHOWCASE_API_BASE_URL != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build showcase
+        run: pnpm build:showcase
+
+      - name: Configure the production API
+        env:
+          SHOWCASE_API_BASE_URL: ${{ vars.SHOWCASE_API_BASE_URL }}
+        run: >-
+          node --input-type=module --eval
+          "import { writeFileSync } from 'node:fs';
+          const value = new URL(process.env.SHOWCASE_API_BASE_URL).toString().replace(/\/$/, '');
+          writeFileSync('dist/showcase/browser/runtime-config.js',
+          'globalThis.__NGRX_OFFLINE_CONFIG__ = { apiBaseUrl: ' + JSON.stringify(value) + ' };\n');"
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload showcase artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist/showcase/browser
+
+  deploy:
+    name: Deploy showcase
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy GitHub Pages artifact
+        id: deployment
+        uses: actions/deploy-pages@v4

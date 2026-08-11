@@ -1,0 +1,21 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "../..",
+    "paths": {
+      "@poodlelab/ngrx-offline": ["dist/ngrx-offline/types/poodlelab-ngrx-offline.d.ts"],
+      "@poodlelab/ngrx-offline/core": ["dist/ngrx-offline/types/poodlelab-ngrx-offline-core.d.ts"],
+      "@poodlelab/ngrx-offline/indexeddb": [
+        "dist/ngrx-offline/types/poodlelab-ngrx-offline-indexeddb.d.ts"
+      ],
+      "@poodlelab/ngrx-offline/testing": [
+        "dist/ngrx-offline/types/poodlelab-ngrx-offline-testing.d.ts"
+      ],
+      "@poodlelab/ngrx-offline/worker": [
+        "dist/ngrx-offline/types/poodlelab-ngrx-offline-worker.d.ts"
+      ]
+    },
+    "types": []
+  },
+  "include": ["../../dist/ngrx-offline/types/**/*.d.ts"]
+}

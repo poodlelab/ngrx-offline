@@ -1,0 +1,1052 @@
+openapi: 3.1.0
+info:
+  title: NgRx Offline reference API
+  version: 0.1.0
+  summary: Travel-journal API for demonstrating durable relational offline mutations.
+  description: |
+    This API backs the NgRx Offline showcase. Domain mutations require a
+    workspace-scoped idempotency key, creates use client UUIDs plus numeric
+    server IDs, and updates use strong entity tags for optimistic concurrency.
+  contact:
+    name: NgRx Offline maintainers
+    url: https://github.com/poodlelab/ngrx-offline
+  license:
+    name: MIT
+    identifier: MIT
+servers:
+  - url: https://{apiHost}/v1
+    description: Deployed demo API
+    variables:
+      apiHost:
+        default: ngrx-offline-demo-api.workers.dev
+        description: Hostname selected during deployment.
+  - url: http://localhost:8787/v1
+    description: Local Wrangler development server
+tags:
+  - name: System
+    description: Service health and version information.
+  - name: Demo workspaces
+    description: Anonymous capability-scoped workspace lifecycle.
+  - name: Snapshot
+    description: Consistent workspace data snapshots.
+  - name: Trips
+    description: Journeys at the root of the demo hierarchy.
+  - name: TravelDays
+    description: Dated journal chapters belonging to trips.
+  - name: Place visits
+    description: Locations recorded during a travel day.
+  - name: Memories
+    description: Ordered memories belonging to place visits.
+  - name: Day reflections
+    description: Evening reflections belonging directly to travel days.
+  - name: Test controls
+    description: Workspace-scoped deterministic failure behavior.
+security:
+  - demoWorkspace: []
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      summary: Check API health
+      tags: [System]
+      security: []
+      responses:
+        '200':
+          description: API is available.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/Health
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /version:
+    get:
+      operationId: getVersion
+      summary: Get the deployed API version
+      tags: [System]
+      security: []
+      responses:
+        '200':
+          description: Deployed API and Workers compatibility versions.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/VersionInfo
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /demo-workspaces:
+    post:
+      operationId: registerDemoWorkspace
+      summary: Register a client-generated demo workspace
+      description: |
+        Registration is idempotent for the same workspace UUID and secret. If
+        the UUID already exists with another secret, the API returns 409.
+      tags: [Demo workspaces]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./schemas.json#/$defs/RegisterWorkspaceRequest
+      responses:
+        '201':
+          description: Workspace registered.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/Workspace
+        '200':
+          description: Existing workspace recovered with matching credentials.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/Workspace
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/ValidationFailed'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /demo-workspaces/reset:
+    post:
+      operationId: resetDemoWorkspace
+      summary: Remove all domain data from the active workspace
+      description: |
+        Reset is administrative and idempotent. It deletes domain records,
+        idempotency receipts, and armed test behaviors while retaining the
+        workspace capability.
+      tags: [Demo workspaces]
+      responses:
+        '200':
+          description: Workspace reset.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/WorkspaceReset
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /snapshot:
+    get:
+      operationId: getSnapshot
+      summary: Get a consistent snapshot of the active workspace
+      tags: [Snapshot]
+      responses:
+        '200':
+          description: Complete workspace snapshot.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/Snapshot
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /trips:
+    get:
+      operationId: listTrips
+      summary: List trips
+      tags: [Trips]
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: A page of trips ordered by server ID.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/TripList
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    post:
+      operationId: createTrip
+      summary: Create a trip
+      tags: [Trips]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./schemas.json#/$defs/CreateTripRequest
+      responses:
+        '201':
+          description: Trip created or original success replayed.
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+            ETag:
+              $ref: '#/components/headers/ETag'
+            Idempotency-Replayed:
+              $ref: '#/components/headers/IdempotencyReplayed'
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/Trip
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/ValidationFailed'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /trips/{tripId}:
+    parameters:
+      - $ref: '#/components/parameters/TripId'
+    get:
+      operationId: getTrip
+      summary: Get a trip
+      tags: [Trips]
+      responses:
+        '200':
+          description: Trip found.
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/Trip
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    patch:
+      operationId: updateTrip
+      summary: Update a trip
+      tags: [Trips]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./schemas.json#/$defs/UpdateTripRequest
+      responses:
+        '200':
+          description: Trip updated or original success replayed.
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+            Idempotency-Replayed:
+              $ref: '#/components/headers/IdempotencyReplayed'
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/Trip
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
+        '422':
+          $ref: '#/components/responses/ValidationFailed'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /travel-days:
+    get:
+      operationId: listTravelDays
+      summary: List travel days
+      tags: [TravelDays]
+      parameters:
+        - $ref: '#/components/parameters/TripFilter'
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: A page of travel days ordered by server ID.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/TravelDayList
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    post:
+      operationId: createTravelDay
+      summary: Create a travel day or site
+      tags: [TravelDays]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./schemas.json#/$defs/CreateTravelDayRequest
+      responses:
+        '201':
+          description: TravelDay created or original success replayed.
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+            ETag:
+              $ref: '#/components/headers/ETag'
+            Idempotency-Replayed:
+              $ref: '#/components/headers/IdempotencyReplayed'
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/TravelDay
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/ValidationFailed'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /travel-days/{travelDayId}:
+    parameters:
+      - $ref: '#/components/parameters/TravelDayId'
+    get:
+      operationId: getTravelDay
+      summary: Get a travel day
+      tags: [TravelDays]
+      responses:
+        '200':
+          description: TravelDay found.
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/TravelDay
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    patch:
+      operationId: updateTravelDay
+      summary: Update a travel day
+      tags: [TravelDays]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./schemas.json#/$defs/UpdateTravelDayRequest
+      responses:
+        '200':
+          description: TravelDay updated or original success replayed.
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+            Idempotency-Replayed:
+              $ref: '#/components/headers/IdempotencyReplayed'
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/TravelDay
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
+        '422':
+          $ref: '#/components/responses/ValidationFailed'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /place-visits:
+    get:
+      operationId: listPlaceVisits
+      summary: List place visits
+      tags: [Place visits]
+      parameters:
+        - $ref: '#/components/parameters/TravelDayFilter'
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: A page of place visits ordered by server ID.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/PlaceVisitList
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    post:
+      operationId: createPlaceVisit
+      summary: Create a place visit
+      tags: [Place visits]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./schemas.json#/$defs/CreatePlaceVisitRequest
+      responses:
+        '201':
+          description: Place visit created or original success replayed.
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+            ETag:
+              $ref: '#/components/headers/ETag'
+            Idempotency-Replayed:
+              $ref: '#/components/headers/IdempotencyReplayed'
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/PlaceVisit
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/ValidationFailed'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /place-visits/{placeVisitId}:
+    parameters:
+      - $ref: '#/components/parameters/PlaceVisitId'
+    get:
+      operationId: getPlaceVisit
+      summary: Get a place visit
+      tags: [Place visits]
+      responses:
+        '200':
+          description: Place visit found.
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/PlaceVisit
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    patch:
+      operationId: updatePlaceVisit
+      summary: Update a place visit
+      tags: [Place visits]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./schemas.json#/$defs/UpdatePlaceVisitRequest
+      responses:
+        '200':
+          description: Place visit updated or original success replayed.
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+            Idempotency-Replayed:
+              $ref: '#/components/headers/IdempotencyReplayed'
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/PlaceVisit
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
+        '422':
+          $ref: '#/components/responses/ValidationFailed'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /memories:
+    get:
+      operationId: listMemories
+      summary: List memories
+      tags: [Memories]
+      parameters:
+        - $ref: '#/components/parameters/PlaceVisitFilter'
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: A page ordered by sort order and server ID.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/MemoryList
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    post:
+      operationId: createMemory
+      summary: Create a memory
+      tags: [Memories]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./schemas.json#/$defs/CreateMemoryRequest
+      responses:
+        '201':
+          description: Memory created or original success replayed.
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+            ETag:
+              $ref: '#/components/headers/ETag'
+            Idempotency-Replayed:
+              $ref: '#/components/headers/IdempotencyReplayed'
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/Memory
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/ValidationFailed'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /memories/{memoryId}:
+    parameters:
+      - $ref: '#/components/parameters/MemoryId'
+    get:
+      operationId: getMemory
+      summary: Get a memory
+      tags: [Memories]
+      responses:
+        '200':
+          description: Memory found.
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/Memory
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    patch:
+      operationId: updateMemory
+      summary: Update a memory
+      tags: [Memories]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./schemas.json#/$defs/UpdateMemoryRequest
+      responses:
+        '200':
+          description: Memory updated or original success replayed.
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+            Idempotency-Replayed:
+              $ref: '#/components/headers/IdempotencyReplayed'
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/Memory
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
+        '422':
+          $ref: '#/components/responses/ValidationFailed'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /day-reflections:
+    get:
+      operationId: listDayReflections
+      summary: List day reflections
+      tags: [Day reflections]
+      parameters:
+        - $ref: '#/components/parameters/TravelDayFilter'
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: A page of day reflections ordered by client creation time and server ID.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/DayReflectionList
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    post:
+      operationId: createDayReflection
+      summary: Create a day reflection
+      tags: [Day reflections]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./schemas.json#/$defs/CreateDayReflectionRequest
+      responses:
+        '201':
+          description: DayReflection created or original success replayed.
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+            ETag:
+              $ref: '#/components/headers/ETag'
+            Idempotency-Replayed:
+              $ref: '#/components/headers/IdempotencyReplayed'
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/DayReflection
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/ValidationFailed'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /day-reflections/{dayReflectionId}:
+    parameters:
+      - $ref: '#/components/parameters/DayReflectionId'
+    get:
+      operationId: getDayReflection
+      summary: Get a day reflection
+      tags: [Day reflections]
+      responses:
+        '200':
+          description: DayReflection found.
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/DayReflection
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    patch:
+      operationId: updateDayReflection
+      summary: Update a day reflection
+      tags: [Day reflections]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./schemas.json#/$defs/UpdateDayReflectionRequest
+      responses:
+        '200':
+          description: DayReflection updated or original success replayed.
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+            Idempotency-Replayed:
+              $ref: '#/components/headers/IdempotencyReplayed'
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/DayReflection
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
+        '422':
+          $ref: '#/components/responses/ValidationFailed'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /test-controls/behaviors:
+    post:
+      operationId: configureTestBehavior
+      summary: Arm one deterministic behavior for an operation
+      description: The behavior is scoped to the active workspace and consumed once.
+      tags: [Test controls]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./schemas.json#/$defs/ConfigureTestBehaviorRequest
+      responses:
+        '200':
+          description: Behavior armed or replaced.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/ConfiguredTestBehavior
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationFailed'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /test-controls/behaviors/{idempotencyKey}:
+    parameters:
+      - $ref: '#/components/parameters/BehaviorIdempotencyKey'
+    delete:
+      operationId: clearTestBehavior
+      summary: Disarm a deterministic operation behavior
+      tags: [Test controls]
+      responses:
+        '204':
+          description: Behavior absent or disarmed.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /test-controls/diagnostics/{idempotencyKey}:
+    parameters:
+      - $ref: '#/components/parameters/BehaviorIdempotencyKey'
+    get:
+      operationId: getRequestDiagnostic
+      summary: Read workspace-scoped delivery and mutation counts
+      tags: [Test controls]
+      responses:
+        '200':
+          description: Diagnostic counts for one idempotency key.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas.json#/$defs/RequestDiagnostic
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+components:
+  securitySchemes:
+    demoWorkspace:
+      type: http
+      scheme: bearer
+      bearerFormat: <workspace UUID>.<base64url secret>
+      description: Client-generated capability registered through `/demo-workspaces`.
+  parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      description: Operation UUID. Unique within the active workspace.
+      schema:
+        type: string
+        format: uuid
+    IfMatch:
+      name: If-Match
+      in: header
+      required: true
+      description: Strong ETag containing the entity version, for example `"3"`.
+      schema:
+        type: string
+        pattern: '^"[1-9][0-9]*"$'
+    Cursor:
+      name: cursor
+      in: query
+      required: false
+      description: Opaque cursor returned by the preceding page.
+      schema:
+        type: string
+        minLength: 1
+    Limit:
+      name: limit
+      in: query
+      required: false
+      description: Maximum number of records to return.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 50
+    TripId:
+      name: tripId
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+    TravelDayId:
+      name: travelDayId
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+    PlaceVisitId:
+      name: placeVisitId
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+    MemoryId:
+      name: memoryId
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+    DayReflectionId:
+      name: dayReflectionId
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+    TripFilter:
+      name: tripId
+      in: query
+      required: false
+      description: Restrict travel days to one trip.
+      schema:
+        type: integer
+        minimum: 1
+    TravelDayFilter:
+      name: travelDayId
+      in: query
+      required: false
+      description: Restrict place visits to one travel day.
+      schema:
+        type: integer
+        minimum: 1
+    PlaceVisitFilter:
+      name: placeVisitId
+      in: query
+      required: false
+      description: Restrict child records to one place visit.
+      schema:
+        type: integer
+        minimum: 1
+    BehaviorIdempotencyKey:
+      name: idempotencyKey
+      in: path
+      required: true
+      description: Operation UUID whose behavior should be removed.
+      schema:
+        type: string
+        format: uuid
+  headers:
+    ETag:
+      description: Strong entity version tag, for example `"3"`.
+      schema:
+        type: string
+        pattern: '^"[1-9][0-9]*"$'
+    IdempotencyReplayed:
+      description: Present and true when the stored response was replayed.
+      schema:
+        type: boolean
+    Location:
+      description: Relative URL of the created entity.
+      schema:
+        type: string
+    RetryAfter:
+      description: Seconds until the client should retry.
+      schema:
+        type: integer
+        minimum: 1
+  responses:
+    BadRequest:
+      description: Malformed request, header, query, or path value.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ./schemas.json#/$defs/ProblemDetails
+    Unauthorized:
+      description: Workspace capability missing, invalid, or expired.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ./schemas.json#/$defs/ProblemDetails
+    NotFound:
+      description: Resource does not exist in the active workspace.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ./schemas.json#/$defs/ProblemDetails
+    Conflict:
+      description: Domain conflict or incompatible idempotency-key reuse.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ./schemas.json#/$defs/ProblemDetails
+    PreconditionFailed:
+      description: The If-Match header does not match the current entity version.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ./schemas.json#/$defs/ProblemDetails
+    ValidationFailed:
+      description: Structurally valid request violates field or domain validation.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ./schemas.json#/$defs/ProblemDetails
+    TooManyRequests:
+      description: Workspace or origin rate limit exceeded.
+      headers:
+        Retry-After:
+          $ref: '#/components/headers/RetryAfter'
+      content:
+        application/problem+json:
+          schema:
+            $ref: ./schemas.json#/$defs/ProblemDetails
+    ServerError:
+      description: Unexpected server failure.
+      content:
+        application/problem+json:
+          schema:
+            $ref: ./schemas.json#/$defs/ProblemDetails

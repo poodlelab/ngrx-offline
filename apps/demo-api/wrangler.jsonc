@@ -1,0 +1,22 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "ngrx-offline-demo-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-10",
+  "observability": { "enabled": true, "head_sampling_rate": 1 },
+  "vars": {
+    "API_VERSION": "0.1.0",
+    "GITHUB_PAGES_ORIGIN": "https://poodlelab.github.io",
+    "WORKSPACE_RETENTION_DAYS": "7",
+    "REQUESTS_PER_MINUTE": "150",
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "ngrx-offline-demo",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations",
+    },
+  ],
+  "triggers": { "crons": ["17 * * * *"] },
+}

@@ -1,0 +1,9 @@
+.angular
+CONCEPT.md
+coverage
+dist
+docs/server-contract/schemas.json
+etc/*.api.md
+node_modules
+pnpm-lock.yaml
+temp

@@ -1,0 +1,18 @@
+{
+  "name": "Atlas Journal · NgRx Offline",
+  "short_name": "Atlas Journal",
+  "description": "A beautiful offline-first travel journal built with NgRx Offline.",
+  "start_url": "/ngrx-offline/",
+  "scope": "/ngrx-offline/",
+  "display": "standalone",
+  "background_color": "#f4f1e9",
+  "theme_color": "#173f3a",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

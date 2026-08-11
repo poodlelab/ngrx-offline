@@ -1,0 +1,14 @@
+apis:
+  demo-api@v1:
+    root: ./docs/server-contract/openapi.yaml
+
+extends:
+  - recommended
+
+rules:
+  no-unresolved-refs: error
+  no-server-example.com: off
+  operation-4xx-response: error
+  operation-operationId: error
+  security-defined: error
+  tag-description: error
