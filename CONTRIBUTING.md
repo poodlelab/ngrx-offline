@@ -12,6 +12,13 @@ or compatibility guarantees.
 Security vulnerabilities must follow [SECURITY.md](./SECURITY.md) and must not
 be reported in public issues.
 
+## AI-assisted contributions
+
+AI-assisted contributions are welcome, but contributors remain responsible for
+the code they submit and should be able to explain, test, and maintain it. The
+same review, licensing, security, and quality requirements apply regardless of
+which tools were used to produce a contribution.
+
 ## Development setup
 
 The repository pins its expected Node.js and pnpm versions.

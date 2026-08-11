@@ -126,6 +126,17 @@ The package targets the latest stable, mutually compatible Angular and NgRx
 release line. See [ADR-0002](./docs/decisions/0002-compatibility-and-browser-support.md)
 for the compatibility policy.
 
+## AI-assisted development
+
+This project is developed with substantial assistance from agentic AI tools,
+currently primarily OpenAI Codex. AI agents are used for implementation,
+testing, documentation, and repository maintenance under maintainer direction.
+
+Changes are accepted only after automated validation and maintainer approval.
+Responsibility for the project, its design decisions, and its releases remains
+with the human maintainer. AI assistance does not change the project's license
+or the quality requirements applied to contributions.
+
 ## Development
 
 Prerequisites:
