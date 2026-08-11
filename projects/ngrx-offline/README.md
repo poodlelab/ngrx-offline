@@ -26,8 +26,10 @@ interest.
 ## Install
 
 ```bash
-pnpm add @poodlelab/ngrx-offline@alpha
+npm install @poodlelab/ngrx-offline@alpha
 ```
+
+With pnpm, use `pnpm add @poodlelab/ngrx-offline@alpha`.
 
 Entry points:
 

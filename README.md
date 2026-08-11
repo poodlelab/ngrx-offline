@@ -30,6 +30,11 @@ server reconciliation.
 The defining guarantee is that an operation is durable before its `queued`
 event is emitted.
 
+![Create related travel-journal records offline, then reconnect and resolve their server IDs](./docs/media/offline-relations-walkthrough.gif)
+
+The showcase creates seven related records while offline, then replays them in
+dependency order and replaces each local reference with its server ID.
+
 ## Project status
 
 - Architecture: implemented and documented
@@ -40,7 +45,7 @@ event is emitted.
 - Relations, multi-tab hardening, and worker replay: complete
 - Browser hardening and release-candidate package validation: complete
 - Isolated Cloudflare Worker/D1 reference API: deployed for the live showcase
-- npm package: [`@poodlelab/ngrx-offline@0.1.0-alpha.0`](https://www.npmjs.com/package/@poodlelab/ngrx-offline/v/0.1.0-alpha.0)
+- npm package: [`@poodlelab/ngrx-offline@0.1.0-alpha.1`](https://www.npmjs.com/package/@poodlelab/ngrx-offline/v/0.1.0-alpha.1)
 - Atlas Journal showcase: [live on GitHub Pages](https://poodlelab.github.io/ngrx-offline/)
 
 See the [technical concept](./CONCEPT.md) and the
@@ -63,8 +68,10 @@ recorded in the [release-candidate guide](./docs/guides/release-candidate.md).
 ## Package
 
 ```bash
-pnpm add @poodlelab/ngrx-offline@alpha
+npm install @poodlelab/ngrx-offline@alpha
 ```
+
+With pnpm, use `pnpm add @poodlelab/ngrx-offline@alpha`.
 
 Implemented entry points:
 

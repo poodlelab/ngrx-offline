@@ -8,6 +8,7 @@ import {
   on,
   props,
 } from '@ngrx/store';
+import type { Action, ActionReducer, MemoizedSelector } from '@ngrx/store';
 
 /**
  * Payload-free queue metadata safe to expose through NgRx and Redux DevTools.
@@ -51,6 +52,29 @@ export interface OfflineOutboxState {
   readonly blockedCount: number;
   readonly operations: Readonly<Record<string, OfflineOperationSummary>>;
   readonly storageHealth: OfflineStorageHealth;
+}
+
+/** Selector shape exposed by the offline outbox feature. @alpha */
+export type OfflineOutboxSelector<Result> = MemoizedSelector<
+  Record<string, unknown>,
+  Result,
+  (featureState: OfflineOutboxState) => Result
+>;
+
+/** Stable public shape returned by the NgRx feature factory. @alpha */
+export interface OfflineOutboxFeature {
+  readonly name: 'ngrxOfflineOutbox';
+  readonly reducer: ActionReducer<OfflineOutboxState, Action<string>>;
+  readonly selectNgrxOfflineOutboxState: OfflineOutboxSelector<OfflineOutboxState>;
+  readonly selectHydrated: OfflineOutboxSelector<boolean>;
+  readonly selectSyncing: OfflineOutboxSelector<boolean>;
+  readonly selectActiveScope: OfflineOutboxSelector<string | null>;
+  readonly selectPendingCount: OfflineOutboxSelector<number>;
+  readonly selectBlockedCount: OfflineOutboxSelector<number>;
+  readonly selectOperations: OfflineOutboxSelector<
+    Readonly<Record<string, OfflineOperationSummary>>
+  >;
+  readonly selectStorageHealth: OfflineOutboxSelector<OfflineStorageHealth>;
 }
 
 /** Payload-free pending and blocked counts grouped by immutable scope. @alpha */
@@ -105,7 +129,7 @@ const initialState: OfflineOutboxState = {
 };
 
 /** NgRx feature registered by `provideOfflineOutbox`. @alpha */
-export const offlineOutboxFeature = createFeature({
+export const offlineOutboxFeature: OfflineOutboxFeature = createFeature({
   name: 'ngrxOfflineOutbox',
   reducer: createReducer(
     initialState,

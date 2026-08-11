@@ -6,10 +6,12 @@
 
 import { Action } from '@ngrx/store';
 import { ActionCreator } from '@ngrx/store';
+import { ActionReducer } from '@ngrx/store';
 import { Creator } from '@ngrx/store';
 import { EnvironmentProviders } from '@angular/core';
 import { HttpContextToken } from '@angular/common/http';
 import * as i0 from '@angular/core';
+import { MemoizedSelector } from '@ngrx/store';
 import * as _ngrx_store from '@ngrx/store';
 import { Observable } from 'rxjs';
 
@@ -490,40 +492,40 @@ export interface OfflineOperationSummary {
 
 // @alpha
 export const OfflineOutboxActions: {
-    syncNow: _ngrx_store.ActionCreator<"[NgRx Offline Outbox] Sync Now", () => _ngrx_store.Action<"[NgRx Offline Outbox] Sync Now">>;
+    syncNow: _ngrx_store.ActionCreator<"[NgRx Offline Outbox] Sync Now", () => Action<"[NgRx Offline Outbox] Sync Now">>;
     retry: _ngrx_store.ActionCreator<"[NgRx Offline Outbox] Retry", (props: {
         readonly operationId: string;
     }) => {
         readonly operationId: string;
-    } & _ngrx_store.Action<"[NgRx Offline Outbox] Retry">>;
+    } & Action<"[NgRx Offline Outbox] Retry">>;
     cancel: _ngrx_store.ActionCreator<"[NgRx Offline Outbox] Cancel", (props: {
         readonly operationId: string;
     }) => {
         readonly operationId: string;
-    } & _ngrx_store.Action<"[NgRx Offline Outbox] Cancel">>;
+    } & Action<"[NgRx Offline Outbox] Cancel">>;
     discard: _ngrx_store.ActionCreator<"[NgRx Offline Outbox] Discard", (props: {
         readonly operationId: string;
     }) => {
         readonly operationId: string;
-    } & _ngrx_store.Action<"[NgRx Offline Outbox] Discard">>;
+    } & Action<"[NgRx Offline Outbox] Discard">>;
     pauseScope: _ngrx_store.ActionCreator<"[NgRx Offline Outbox] Pause Scope", (props: {
         readonly scope: string;
     }) => {
         readonly scope: string;
-    } & _ngrx_store.Action<"[NgRx Offline Outbox] Pause Scope">>;
+    } & Action<"[NgRx Offline Outbox] Pause Scope">>;
     resumeScope: _ngrx_store.ActionCreator<"[NgRx Offline Outbox] Resume Scope", (props: {
         readonly scope: string;
     }) => {
         readonly scope: string;
-    } & _ngrx_store.Action<"[NgRx Offline Outbox] Resume Scope">>;
-    restoreOptimisticState: _ngrx_store.ActionCreator<"[NgRx Offline Outbox] Restore Optimistic State", () => _ngrx_store.Action<"[NgRx Offline Outbox] Restore Optimistic State">>;
+    } & Action<"[NgRx Offline Outbox] Resume Scope">>;
+    restoreOptimisticState: _ngrx_store.ActionCreator<"[NgRx Offline Outbox] Restore Optimistic State", () => Action<"[NgRx Offline Outbox] Restore Optimistic State">>;
     logoutScope: _ngrx_store.ActionCreator<"[NgRx Offline Outbox] Logout Scope", (props: {
         readonly scope: string;
         readonly confirmed?: boolean;
     }) => {
         readonly scope: string;
         readonly confirmed?: boolean;
-    } & _ngrx_store.Action<"[NgRx Offline Outbox] Logout Scope">>;
+    } & Action<"[NgRx Offline Outbox] Logout Scope">>;
     logoutConfirmationRequired: _ngrx_store.ActionCreator<"[NgRx Offline Outbox] Logout Confirmation Required", (props: {
         readonly scope: string;
         readonly pending: number;
@@ -532,7 +534,7 @@ export const OfflineOutboxActions: {
         readonly scope: string;
         readonly pending: number;
         readonly blocked: number;
-    } & _ngrx_store.Action<"[NgRx Offline Outbox] Logout Confirmation Required">>;
+    } & Action<"[NgRx Offline Outbox] Logout Confirmation Required">>;
 };
 
 // @alpha
@@ -573,18 +575,34 @@ export interface OfflineOutboxConfig {
 }
 
 // @alpha
-export const offlineOutboxFeature: {
-    name: "ngrxOfflineOutbox";
-    reducer: _ngrx_store.ActionReducer<OfflineOutboxState, _ngrx_store.Action<string>>;
-    selectNgrxOfflineOutboxState: _ngrx_store.MemoizedSelector<Record<string, any>, OfflineOutboxState, (featureState: OfflineOutboxState) => OfflineOutboxState>;
-    selectHydrated: _ngrx_store.MemoizedSelector<Record<string, any>, boolean, (featureState: OfflineOutboxState) => boolean>;
-    selectOperations: _ngrx_store.MemoizedSelector<Record<string, any>, Readonly<Record<string, OfflineOperationSummary>>, (featureState: OfflineOutboxState) => Readonly<Record<string, OfflineOperationSummary>>>;
-    selectSyncing: _ngrx_store.MemoizedSelector<Record<string, any>, boolean, (featureState: OfflineOutboxState) => boolean>;
-    selectActiveScope: _ngrx_store.MemoizedSelector<Record<string, any>, string | null, (featureState: OfflineOutboxState) => string | null>;
-    selectPendingCount: _ngrx_store.MemoizedSelector<Record<string, any>, number, (featureState: OfflineOutboxState) => number>;
-    selectBlockedCount: _ngrx_store.MemoizedSelector<Record<string, any>, number, (featureState: OfflineOutboxState) => number>;
-    selectStorageHealth: _ngrx_store.MemoizedSelector<Record<string, any>, OfflineStorageHealth, (featureState: OfflineOutboxState) => OfflineStorageHealth>;
-};
+export interface OfflineOutboxFeature {
+    // (undocumented)
+    readonly name: 'ngrxOfflineOutbox';
+    // (undocumented)
+    readonly reducer: ActionReducer<OfflineOutboxState, Action<string>>;
+    // (undocumented)
+    readonly selectActiveScope: OfflineOutboxSelector<string | null>;
+    // (undocumented)
+    readonly selectBlockedCount: OfflineOutboxSelector<number>;
+    // (undocumented)
+    readonly selectHydrated: OfflineOutboxSelector<boolean>;
+    // (undocumented)
+    readonly selectNgrxOfflineOutboxState: OfflineOutboxSelector<OfflineOutboxState>;
+    // (undocumented)
+    readonly selectOperations: OfflineOutboxSelector<Readonly<Record<string, OfflineOperationSummary>>>;
+    // (undocumented)
+    readonly selectPendingCount: OfflineOutboxSelector<number>;
+    // (undocumented)
+    readonly selectStorageHealth: OfflineOutboxSelector<OfflineStorageHealth>;
+    // (undocumented)
+    readonly selectSyncing: OfflineOutboxSelector<boolean>;
+}
+
+// @alpha
+export const offlineOutboxFeature: OfflineOutboxFeature;
+
+// @alpha
+export type OfflineOutboxSelector<Result> = MemoizedSelector<Record<string, unknown>, Result, (featureState: OfflineOutboxState) => Result>;
 
 // @alpha
 export interface OfflineOutboxState {
@@ -968,34 +986,34 @@ export interface ScopePause {
 }
 
 // @alpha
-export const selectOfflineBlockedCount: _ngrx_store.MemoizedSelector<Record<string, any>, number, (featureState: OfflineOutboxState) => number>;
+export const selectOfflineBlockedCount: OfflineOutboxSelector<number>;
 
 // @alpha
-export const selectOfflineCountsByScope: _ngrx_store.MemoizedSelector<Record<string, any>, Readonly<Record<string, OfflineScopeCounts>>, (s1: Readonly<Record<string, OfflineOperationSummary>>) => Readonly<Record<string, OfflineScopeCounts>>>;
+export const selectOfflineCountsByScope: MemoizedSelector<Record<string, unknown>, Readonly<Record<string, OfflineScopeCounts>>, (s1: Readonly<Record<string, OfflineOperationSummary>>) => Readonly<Record<string, OfflineScopeCounts>>>;
 
 // @alpha
-export const selectOfflineCountsForScope: (scope: string) => _ngrx_store.MemoizedSelector<Record<string, any>, OfflineScopeCounts, (s1: Readonly<Record<string, OfflineScopeCounts>>) => OfflineScopeCounts>;
+export const selectOfflineCountsForScope: (scope: string) => MemoizedSelector<Record<string, unknown>, OfflineScopeCounts, (s1: Readonly<Record<string, OfflineScopeCounts>>) => OfflineScopeCounts>;
 
 // @alpha
-export const selectOfflineHydrated: _ngrx_store.MemoizedSelector<Record<string, any>, boolean, (featureState: OfflineOutboxState) => boolean>;
+export const selectOfflineHydrated: OfflineOutboxSelector<boolean>;
 
 // @alpha
-export const selectOfflineOperationById: (operationId: string) => _ngrx_store.MemoizedSelector<Record<string, any>, OfflineOperationSummary | undefined, (s1: Readonly<Record<string, OfflineOperationSummary>>) => OfflineOperationSummary | undefined>;
+export const selectOfflineOperationById: (operationId: string) => MemoizedSelector<Record<string, unknown>, OfflineOperationSummary | undefined, (s1: Readonly<Record<string, OfflineOperationSummary>>) => OfflineOperationSummary | undefined>;
 
 // @alpha
-export const selectOfflineOperations: _ngrx_store.MemoizedSelector<Record<string, any>, Readonly<Record<string, OfflineOperationSummary>>, (featureState: OfflineOutboxState) => Readonly<Record<string, OfflineOperationSummary>>>;
+export const selectOfflineOperations: OfflineOutboxSelector<Readonly<Record<string, OfflineOperationSummary>>>;
 
 // @alpha
-export const selectOfflineOperationsForScope: (scope: string) => _ngrx_store.MemoizedSelector<Record<string, any>, OfflineOperationSummary[], (s1: Readonly<Record<string, OfflineOperationSummary>>) => OfflineOperationSummary[]>;
+export const selectOfflineOperationsForScope: (scope: string) => MemoizedSelector<Record<string, unknown>, OfflineOperationSummary[], (s1: Readonly<Record<string, OfflineOperationSummary>>) => OfflineOperationSummary[]>;
 
 // @alpha
-export const selectOfflinePendingCount: _ngrx_store.MemoizedSelector<Record<string, any>, number, (featureState: OfflineOutboxState) => number>;
+export const selectOfflinePendingCount: OfflineOutboxSelector<number>;
 
 // @alpha
-export const selectOfflineStorageHealth: _ngrx_store.MemoizedSelector<Record<string, any>, OfflineStorageHealth, (featureState: OfflineOutboxState) => OfflineStorageHealth>;
+export const selectOfflineStorageHealth: OfflineOutboxSelector<OfflineStorageHealth>;
 
 // @alpha
-export const selectOfflineSyncing: _ngrx_store.MemoizedSelector<Record<string, any>, boolean, (featureState: OfflineOutboxState) => boolean>;
+export const selectOfflineSyncing: OfflineOutboxSelector<boolean>;
 
 // @alpha
 export interface StoredFailure {
