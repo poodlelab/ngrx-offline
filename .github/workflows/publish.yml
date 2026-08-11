@@ -56,4 +56,4 @@ jobs:
 
       - name: Publish alpha with provenance
         if: steps.registry.outputs.published != 'true'
-        run: npm publish dist/ngrx-offline --access public --tag alpha
+        run: npm publish ./dist/ngrx-offline --access public --tag alpha
