@@ -5,7 +5,7 @@ use NgRx.
 
 [Live Atlas Journal showcase](https://poodlelab.github.io/ngrx-offline/) ·
 [Documentation](./docs/guides/README.md) ·
-[npm package](https://www.npmjs.com/package/@poodlelab/ngrx-offline)
+[npm package](https://www.npmjs.com/package/@poodlelab/ngrx-offline/v/0.1.0-alpha.1)
 
 > [!IMPORTANT]
 > **Alpha status.** NgRx Offline is ready for evaluation, but it is not yet

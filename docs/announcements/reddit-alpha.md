@@ -24,7 +24,7 @@ references become server IDs.
 
 - Demo: https://poodlelab.github.io/ngrx-offline/
 - Source and documentation: https://github.com/poodlelab/ngrx-offline
-- npm: https://www.npmjs.com/package/@poodlelab/ngrx-offline
+- npm: https://www.npmjs.com/package/@poodlelab/ngrx-offline/v/0.1.0-alpha.1
 
 This is an alpha for evaluation, not something I recommend for production yet.
 The current release targets Angular and NgRx 21 because that is their latest
