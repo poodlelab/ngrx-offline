@@ -163,7 +163,7 @@ export interface OfflineReference {
 }
 
 /**
- * Context available while building a request in Phase 2.
+ * Context available while building a replay request.
  *
  * @alpha
  */

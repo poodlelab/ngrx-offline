@@ -33,7 +33,7 @@ export interface EngineTestHarnessOptions {
 }
 
 /**
- * Ready-to-drive Phase 2 engine with all framework-independent in-memory ports.
+ * Ready-to-drive replay engine with all framework-independent in-memory ports.
  *
  * @alpha
  */

@@ -43,7 +43,7 @@ dependency order and replaces each local reference with its server ID.
 - Deterministic core runtime and testing utilities: complete
 - IndexedDB persistence and foreground Angular/NgRx integration: complete
 - Relations, multi-tab hardening, and worker replay: complete
-- Browser hardening and release-candidate package validation: complete
+- Browser and package validation: complete
 - Isolated Cloudflare Worker/D1 reference API: deployed for the live showcase
 - npm package: [`@poodlelab/ngrx-offline@0.1.0-alpha.1`](https://www.npmjs.com/package/@poodlelab/ngrx-offline/v/0.1.0-alpha.1)
 - Atlas Journal showcase: [live on GitHub Pages](https://poodlelab.github.io/ngrx-offline/)
@@ -54,7 +54,7 @@ See the [technical concept](./CONCEPT.md) and the
 The framework-independent API and test harness are introduced in the
 [core engine guide](./docs/guides/core-engine.md).
 The browser-usable alpha is covered by the
-[foreground Angular guide](./docs/guides/foreground-angular-mvp.md).
+[Angular integration guide](./docs/guides/angular-integration.md).
 The relational replay model and reference service are covered by the
 [relations guide](./docs/guides/relations-scopes-and-tabs.md) and
 [reference API guide](./docs/guides/reference-api.md).
@@ -63,7 +63,7 @@ The complete interactive workflow is documented in the
 Optional background execution and its authentication boundaries are covered by
 the [service-worker guide](./docs/guides/service-worker-execution.md).
 The browser matrix, API maturity, artifact checks, and performance budgets are
-recorded in the [release-candidate guide](./docs/guides/release-candidate.md).
+recorded in the [quality and compatibility guide](./docs/guides/quality-and-compatibility.md).
 
 ## Package
 

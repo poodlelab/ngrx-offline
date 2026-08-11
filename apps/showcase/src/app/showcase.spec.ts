@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { tripMutation, travelDayMutation, showcaseMutations } from './offline-definitions';
 import { showcaseFeature } from './showcase.store';
 
-describe('Phase 6 showcase integration', () => {
+describe('showcase integration', () => {
   it('starts optimism only after the durable queued lifecycle action', () => {
     const input = {
       clientId: 'trip-local',

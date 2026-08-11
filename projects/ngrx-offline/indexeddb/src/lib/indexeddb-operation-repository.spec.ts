@@ -142,7 +142,7 @@ describe('IndexedDbOperationRepository', () => {
   });
 
   it('updates versions and leases transactionally and deletes only one scope', async () => {
-    const repository = createRepository(new IDBFactory(), 'phase-4-transactions');
+    const repository = createRepository(new IDBFactory(), 'indexeddb-transaction-tests');
     const first = storedOperation({ dependencies: ['customer:local-1'] });
     const otherScope = storedOperation({ id: 'operation-b', scope: 'pool-b' });
     await repository.enqueue(first);
@@ -370,4 +370,4 @@ function transactionDone(transaction: IDBTransaction): Promise<void> {
 }
 
 /** Keeps the IndexedDB suite reachable from Angular's primary test root. */
-export const phase3IndexedDbSuiteRegistered = true;
+export const indexedDbRepositorySuiteRegistered = true;

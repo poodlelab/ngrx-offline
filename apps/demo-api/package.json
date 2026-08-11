@@ -11,7 +11,7 @@
     "migrate:local": "wrangler d1 migrations apply ngrx-offline-demo --local --config wrangler.jsonc",
     "migrate:remote": "wrangler d1 migrations apply ngrx-offline-demo --remote --config wrangler.jsonc",
     "deploy": "wrangler deploy --config wrangler.jsonc",
-    "types": "wrangler types --config wrangler.jsonc",
+    "types": "wrangler types worker-configuration.d.ts --config wrangler.jsonc",
     "test": "vitest run --config vitest.config.ts",
     "typecheck": "tsc -p tsconfig.json --pretty false"
   }

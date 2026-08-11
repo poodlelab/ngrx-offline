@@ -73,7 +73,7 @@ const createChecklist = createDefinition(
   'workOrderId',
 );
 
-describe('Phase 4 relational hardening', () => {
+describe('relational replay', () => {
   it('synchronizes a four-level offline relationship chain with numeric server IDs', async () => {
     const harness = new EngineTestHarness([
       createCustomer,
@@ -235,7 +235,7 @@ describe('Phase 4 relational hardening', () => {
   });
 });
 
-describe('Phase 4 cross-context coordination', () => {
+describe('cross-context coordination', () => {
   it('allows only one transport call when two tab engines replay the same scope', async () => {
     const repository = new InMemoryOperationRepository();
     const clock = new FakeClock(0);

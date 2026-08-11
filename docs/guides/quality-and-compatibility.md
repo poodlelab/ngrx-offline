@@ -1,4 +1,4 @@
-# Release-candidate validation
+# Quality and Compatibility
 
 The release gate treats the package as an external artifact rather than a
 workspace-only library.
@@ -33,7 +33,7 @@ and explicit worker-message fallback.
 ## Public API maturity
 
 Every exported symbol is explicitly marked `@alpha`. There are no stable or
-beta promises in the release-candidate surface. The committed reports under
+beta promises in the alpha surface. The committed reports under
 `etc/` are the reviewable API contract, and `pnpm api:check` fails on accidental
 drift. Secondary entry points re-export the core contract types needed to use
 their APIs, so the reports contain no forgotten exports.
@@ -63,7 +63,7 @@ Angular or NgRx into its dependency graph.
 
 ## Performance budgets
 
-Release-candidate tests enqueue and drain 1,000 operations across eight lanes
+Performance regression tests enqueue and drain 1,000 operations across eight lanes
 within a conservative 10-second CI budget. They also hydrate a payload-free
 NgRx/DevTools projection of 5,000 operations within 1.5 seconds. These are
 regression ceilings, not throughput promises; IndexedDB, transport latency, and
@@ -73,7 +73,7 @@ The NgRx projection intentionally excludes operation inputs and response
 payloads. Full durable records remain in IndexedDB, avoiding large or sensitive
 payload duplication in Redux DevTools.
 
-## Reproduce the candidate checks
+## Reproduce the checks
 
 ```bash
 pnpm check

@@ -1,6 +1,6 @@
 # Deterministic Core Engine
 
-Phase 2 provides the worker-safe operation state machine through
+The worker-safe operation state machine is available through
 `@poodlelab/ngrx-offline/core` and deterministic fakes through
 `@poodlelab/ngrx-offline/testing`. Neither entry point imports Angular or NgRx.
 
@@ -80,7 +80,7 @@ await harness.engine.replay('test-pool');
 Use scripted async handlers to hold a request in flight and prove cancellation
 races. Use `scheduler.advanceBy(...)` to execute retries without sleeping.
 
-## Phase 2 policies
+## Replay policies
 
 - The default lane is strict FIFO. A retrying or blocked head prevents later
   operations in that lane from overtaking it.
@@ -91,5 +91,5 @@ races. Use `scheduler.advanceBy(...)` to execute retries without sleeping.
 - Cancelling or discarding an executing operation is rejected. This avoids
   claiming that an already-sent mutation was cancelled.
 - An unknown kind or stored version without a migration path is blocked with a
-  stable failure code. Chained migrations and reference resolution arrive in
-  Phase 4.
+  stable failure code. Chained migrations and reference resolution are handled
+  by the same replay engine.

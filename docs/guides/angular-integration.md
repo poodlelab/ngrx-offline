@@ -1,9 +1,9 @@
-# Foreground Angular MVP
+# Angular and NgRx Integration
 
-Phase 3 connects the deterministic replay engine to IndexedDB, Angular
-`HttpClient`, and NgRx. It is a foreground outbox: synchronization happens while
-the application is open, immediately after an online enqueue, at startup, on
-reconnect, or after `syncNow`.
+The Angular adapter connects the deterministic replay engine to IndexedDB,
+Angular `HttpClient`, and NgRx. It provides a foreground outbox: synchronization
+happens while the application is open, immediately after an online enqueue, at
+startup, on reconnect, or after `syncNow`.
 
 ## Define and bind a mutation
 

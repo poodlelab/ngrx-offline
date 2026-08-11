@@ -1,4 +1,4 @@
--- Phase 8.5 replaces the unpublished demo domain. Existing local D1 instances
+-- Atlas Journal replaces the original demonstration domain. Existing local D1 instances
 -- may already have applied 0001, so rebuild only disposable domain tables.
 PRAGMA foreign_keys = OFF;
 
