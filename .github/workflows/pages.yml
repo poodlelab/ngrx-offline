@@ -48,7 +48,7 @@ jobs:
           'globalThis.__NGRX_OFFLINE_CONFIG__ = { apiBaseUrl: ' + JSON.stringify(value) + ' };\n');"
 
       - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
 
       - name: Upload showcase artifact
         uses: actions/upload-pages-artifact@v4
