@@ -1,7 +1,6 @@
-# Phase 1 acceptance cases
+# Reference API Acceptance Cases
 
-These cases are normative inputs for Phase 5 API tests and later Playwright
-tests.
+These cases are normative inputs for the API and browser test suites.
 
 ## Identity and relationships
 

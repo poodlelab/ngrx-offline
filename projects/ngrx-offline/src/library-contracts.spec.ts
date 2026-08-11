@@ -1,13 +1,13 @@
 // The Angular test builder discovers entry files from the primary source root.
 // A used export keeps the framework-independent suite in the optimized test bundle.
-import { phase2CoreSuiteRegistered } from '../testing/src/lib/replay-engine.spec';
-import { phase3IndexedDbSuiteRegistered } from '../indexeddb/src/lib/indexeddb-operation-repository.spec';
+import { replayEngineSuiteRegistered } from '../testing/src/lib/replay-engine.spec';
+import { indexedDbRepositorySuiteRegistered } from '../indexeddb/src/lib/indexeddb-operation-repository.spec';
 import { defineOfflineCreate, defineOfflineOperation, offlineRef } from './public-api';
 import { describe, expect, it } from 'vitest';
 
-it('registers the Phase 2 secondary-entry-point suite', () => {
-  expect(phase2CoreSuiteRegistered).toBe(true);
-  expect(phase3IndexedDbSuiteRegistered).toBe(true);
+it('registers the secondary-entry-point suites', () => {
+  expect(replayEngineSuiteRegistered).toBe(true);
+  expect(indexedDbRepositorySuiteRegistered).toBe(true);
 });
 
 describe('concise operation definitions', () => {

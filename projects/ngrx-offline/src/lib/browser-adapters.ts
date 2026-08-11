@@ -85,7 +85,7 @@ export class BrowserScheduler implements Scheduler {
 }
 
 /**
- * Foreground-only keyed mutex. Cross-tab Web Locks coordination arrives in Phase 4.
+ * Foreground-only keyed mutex. Use BrowserCoordinationLock for cross-tab exclusion.
  *
  * @alpha
  */

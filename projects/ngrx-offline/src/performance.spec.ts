@@ -16,7 +16,7 @@ const bulkCreate = defineOfflineOperation<{ readonly index: number }, { readonly
   parseResult: (response) => response.body as { readonly id: string },
 });
 
-describe('Phase 8 release-candidate performance budgets', () => {
+describe('performance regression budgets', () => {
   it('enqueues and drains a 1,000-operation queue within the conservative CI budget', async () => {
     const harness = new EngineTestHarness([bulkCreate], {
       engine: { maximumConcurrentLanes: 8, maximumOperationsPerRun: queueSize + 1 },

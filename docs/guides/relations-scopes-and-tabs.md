@@ -1,7 +1,8 @@
 # Relations, Scopes, and Multi-tab Replay
 
-Phase 4 adds explicit relationships, independent replay lanes, operation input
-migrations, scope lifecycle policies, and browser-wide coordination.
+The library supports explicit relationships, independent replay lanes,
+operation input migrations, scope lifecycle policies, and browser-wide
+coordination.
 
 ## Explicit relationships
 

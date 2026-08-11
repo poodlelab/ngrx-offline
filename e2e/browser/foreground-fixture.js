@@ -12,7 +12,7 @@ import {
 } from '@poodlelab/ngrx-offline/indexeddb';
 
 const parameters = new URL(location.href).searchParams;
-const databaseName = 'ngrx-offline-phase3-browser';
+const databaseName = 'ngrx-offline-browser-fixture';
 if (parameters.has('reset')) {
   await deleteDatabase(databaseName);
   history.replaceState({}, '', location.pathname);
@@ -152,14 +152,14 @@ const engine = new ReplayEngine(
     events: { emit: (event) => state.events.push(event) },
   },
   {
-    coordinationKey: 'phase3-browser',
+    coordinationKey: 'browser-fixture',
     claimDurationMs: 300,
     claimRenewalIntervalMs: 100,
     maximumOperationsPerRun: 2000,
   },
 );
 
-window.phase3Fixture = {
+window.offlineFixture = {
   queue: async (scope = 'browser-pool') => {
     const queued = await engine.enqueue(
       operation,
@@ -230,7 +230,7 @@ window.phase3Fixture = {
     scopeCounts: await repository.countOperationsByScope(),
   }),
 };
-window.phase3Ready = true;
+window.offlineFixtureReady = true;
 addEventListener('pagehide', () => void repository.close());
 
 function deleteDatabase(name) {

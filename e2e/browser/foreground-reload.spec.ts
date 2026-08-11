@@ -4,24 +4,24 @@ test('queues offline, reloads, restores optimism, and replays with one idempoten
   page,
 }) => {
   await page.goto('/e2e/browser/foreground-fixture.html?reset');
-  await page.waitForFunction(() => Boolean(window.phase3Ready));
-  const operationId = await page.evaluate(() => window.phase3Fixture.queue());
-  const queued = await page.evaluate(() => window.phase3Fixture.snapshot());
+  await page.waitForFunction(() => Boolean(window.offlineFixtureReady));
+  const operationId = await page.evaluate(() => window.offlineFixture.queue());
+  const queued = await page.evaluate(() => window.offlineFixture.snapshot());
   expect(queued.optimistic).toBe(true);
   expect(queued.operations).toHaveLength(1);
   expect(queued.operations[0]?.id).toBe(operationId);
   expect(queued.events.map((event) => event.type)).toContain('queued');
 
   await page.reload();
-  await page.waitForFunction(() => Boolean(window.phase3Ready));
-  const reloaded = await page.evaluate(() => window.phase3Fixture.snapshot());
+  await page.waitForFunction(() => Boolean(window.offlineFixtureReady));
+  const reloaded = await page.evaluate(() => window.offlineFixture.snapshot());
   expect(reloaded.optimistic).toBe(false);
   expect(reloaded.operations).toHaveLength(1);
 
-  await page.evaluate(() => window.phase3Fixture.restore());
-  expect((await page.evaluate(() => window.phase3Fixture.snapshot())).optimistic).toBe(true);
-  await page.evaluate(() => window.phase3Fixture.reconnectAndSync());
-  const synchronized = await page.evaluate(() => window.phase3Fixture.snapshot());
+  await page.evaluate(() => window.offlineFixture.restore());
+  expect((await page.evaluate(() => window.offlineFixture.snapshot())).optimistic).toBe(true);
+  await page.evaluate(() => window.offlineFixture.reconnectAndSync());
+  const synchronized = await page.evaluate(() => window.offlineFixture.snapshot());
   expect(synchronized.operations).toEqual([]);
   expect(synchronized.receipts).toHaveLength(1);
   expect(synchronized.receipts[0]?.operationId).toBe(operationId);
@@ -30,8 +30,8 @@ test('queues offline, reloads, restores optimism, and replays with one idempoten
 
 declare global {
   interface Window {
-    phase3Ready: boolean;
-    phase3Fixture: {
+    offlineFixtureReady: boolean;
+    offlineFixture: {
       queue(scope?: string): Promise<string>;
       restore(): Promise<void>;
       reconnectAndSync(scope?: string): Promise<unknown>;

@@ -317,7 +317,7 @@ describe('ReplayEngine', () => {
   });
 });
 
-describe('Phase 2 deterministic contracts', () => {
+describe('deterministic replay contracts', () => {
   it('rejects duplicate globally unique operation kinds', () => {
     expect(() => new OperationRegistry([createCustomer, createCustomer])).toThrow(
       /registered more than once/,
@@ -368,4 +368,4 @@ function storedOperation(overrides: Partial<StoredOperation>): StoredOperation {
 }
 
 /** Keeps the secondary-entry-point suite reachable from Angular's primary test root. */
-export const phase2CoreSuiteRegistered = true;
+export const replayEngineSuiteRegistered = true;

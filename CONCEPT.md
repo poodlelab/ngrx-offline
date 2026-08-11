@@ -1,11 +1,11 @@
 # Durable Offline Mutations for NgRx
 
-## Technical Design and Implementation Handoff
+## Architecture and Design
 
-Status: Proposed architecture  
-Document date: 2026-08-04  
-Initial target: Angular 21 and NgRx 21  
-Working package name: `@scope/ngrx-offline`
+- Status: Implemented alpha architecture
+- Document date: 2026-08-04
+- Initial target: Angular 21 and NgRx 21
+- Package: `@poodlelab/ngrx-offline`
 
 ## 1. Executive Summary
 
@@ -131,32 +131,32 @@ The library does not provide:
 
 ## 5. Package and Repository Structure
 
-The first public release should use one versioned npm package with secondary
-entry points:
+The alpha uses one versioned npm package with secondary entry points:
 
 ```text
-@scope/ngrx-offline/core
-@scope/ngrx-offline
-@scope/ngrx-offline/worker
-@scope/ngrx-offline/testing
+@poodlelab/ngrx-offline
+@poodlelab/ngrx-offline/core
+@poodlelab/ngrx-offline/indexeddb
+@poodlelab/ngrx-offline/worker
+@poodlelab/ngrx-offline/testing
 ```
 
-Recommended source repository:
+Repository structure:
 
 ```text
-packages/
+projects/ngrx-offline/
   core/                 # Pure TypeScript state machine and contracts
   indexeddb/            # Browser persistence implementation
-  ngrx/                 # Angular providers, actions, effects, selectors
+  src/                  # Angular providers, actions, effects, selectors
   worker/               # Worker-safe coordinator and fetch transport
   testing/              # In-memory stores, fake clock and test harness
-examples/
-  angular-store/        # Complete Angular and NgRx example
-  reference-server/     # API with idempotency and conflict handling
+apps/
+  showcase/             # Atlas Journal Angular and NgRx example
+  demo-api/             # API with idempotency and conflict handling
 e2e/
   browser/              # Playwright offline, reload, worker and multi-tab tests
 docs/
-  concepts/
+  decisions/
   guides/
   server-contract/
 ```
@@ -628,8 +628,8 @@ store.dispatch(uploadDocument.requested({
 ```
 
 Attachment records are reference-counted and deleted when no pending operation
-or retained receipt uses them. File upload support may ship after the JSON
-mutation MVP, but the storage schema must reserve this boundary from the start.
+or retained receipt uses them. File upload support may be added after the JSON
+mutation API, but the storage schema reserves this boundary from the start.
 
 ### 9.6 Transactions
 
@@ -1095,77 +1095,31 @@ to platform capability, while foreground replay must pass everywhere.
 
 The example must demonstrate more than a single retried Todo POST.
 
-Recommended domain:
+Atlas Journal demonstrates a complete travel journal whose records can all be
+created before server IDs exist:
 
-- Projects contain tasks.
-- Both can be created offline.
-- Tasks can reference projects created offline.
-- Updates use entity versions and can conflict.
-- An attachment can be queued after the JSON MVP.
-- The UI displays pending and blocked states.
-- Multiple accounts demonstrate scope isolation.
+- a Trip contains Travel Days;
+- a Travel Day contains Place Visits and Memories;
+- Memories can belong to Places created in the same offline session;
+- a Reflection branches from a Travel Day;
+- the UI shows pending, blocked, and synchronized state;
+- browser controls demonstrate offline replay, response loss, conflicts, and
+  recovery without relying on a trivial Todo domain.
 
 The reference server must implement:
 
+- an isolated data pool identified by a client-generated workspace ID and
+  capability secret;
 - idempotency-key storage and duplicate response replay;
 - optimistic concurrency with ETags or numeric versions;
 - deterministic test endpoints for timeout, commit-with-lost-response, `409`,
   `422`, and `500` behavior;
 - request-count diagnostics used by browser tests.
 
-The README quick start should remain a small Todo example, while the complete
-reference application proves the difficult guarantees.
+The README introduces the concise mutation API, while Atlas Journal proves the
+difficult guarantees with a realistic relationship graph.
 
-## 23. Delivery Roadmap
-
-### Phase 0: Repository Foundation
-
-- Create workspace, package entry points, CI, API extractor and documentation.
-- Establish Angular 21 and NgRx 21 compatibility.
-- Build deterministic in-memory repository and replay-engine test harness.
-- Publish architecture and server-contract documents before API stabilization.
-
-### Phase 1: Foreground MVP
-
-- Mutation definitions and typed NgRx lifecycle actions.
-- IndexedDB operation repository and migrations.
-- Durable-before-optimistic enqueueing.
-- Single default FIFO lane.
-- Foreground HTTP transport.
-- Retry, blocked operations, manual retry and discard.
-- Idempotency-key handling.
-- Queue feature state and selectors.
-- Reload and commit-with-lost-response tests.
-
-This phase is sufficient for an initial alpha. It provides correctness whenever
-the application is opened, without relying on service-worker support.
-
-### Phase 2: Dependencies and Production Hardening
-
-- Explicit references and produced values.
-- Multiple lanes and bounded concurrency.
-- Scope isolation, logout policies, and auth pause/resume.
-- Persistent-storage and quota reporting.
-- Operation migrations and stale claim recovery.
-- Complete reference server and multi-tab tests.
-
-### Phase 3: Worker Execution
-
-- Worker-safe registry and fetch transport.
-- Angular custom service-worker integration guide.
-- Background Sync and explicit-message triggers.
-- Durable completion receipts and client notification.
-- Worker crash and termination tests.
-
-### Phase 4: Ecosystem Adapters
-
-- SignalStore feature adapter.
-- Optional NgRx Data compatibility adapter only if there is demonstrated demand.
-- Blob/attachment transport.
-- Optional GraphQL transport.
-- Development queue inspector.
-
-## 24. Public Release Criteria
+## 23. Public Release Criteria
 
 The package should not reach stable `1.0` until:
 
@@ -1181,36 +1135,7 @@ The package should not reach stable `1.0` until:
 - upgrade and compatibility policies are documented;
 - the project has a clear maintenance and security-reporting process.
 
-## 25. Deliberate Lessons From the Existing Prototype
-
-The proposed library retains these proven concepts:
-
-- explicit opt-in for replayable work;
-- a durable IndexedDB outbox separate from transient Store state;
-- scope-aware FIFO replay;
-- shared foreground and worker execution logic;
-- cross-context locking;
-- optimistic UI and visible unsynchronized state;
-- temporary relationship resolution;
-- durable worker outcomes and synchronization diagnostics.
-
-It intentionally replaces these implementation details:
-
-- replay metadata encoded in action type strings;
-- side effects in a meta-reducer;
-- raw NgRx action persistence;
-- one global current-action correlation variable;
-- request URL and payload inference;
-- arbitrary negative-number replacement;
-- application-specific error heuristics in generic infrastructure;
-- whole-Store persistence as part of mutation reliability.
-
-The existing prototype is therefore a source of validated requirements and
-failure lessons, not code that should be copied into the public package.
-
-## 26. Initial Decisions and Open Questions
-
-### Decided
+## 24. Scope Decisions
 
 - Start with NgRx Store, not SignalStore or NgRx Data.
 - Use functional effects and ordinary reducers, not a meta-reducer.
@@ -1222,52 +1147,20 @@ failure lessons, not code that should be copied into the public package.
 - Keep Background Sync optional.
 - Use explicit references instead of negative-ID scanning.
 - Ship headless APIs rather than UI components.
-- Publish one package with secondary entry points initially.
+- Publish `@poodlelab/ngrx-offline` with secondary entry points.
+- Support the current Angular and NgRx 21 release line, with browser-wide
+  foreground correctness and an IndexedDB coordination fallback.
+- Use Angular `HttpClient` for foreground execution and `fetch` in workers.
 
-### To Decide During Phase 0
-
-- Final package and npm scope name.
-- Minimum browser versions and whether an IndexedDB lock fallback is mandatory
-  in the first alpha.
-- Whether the default foreground transport uses Angular `HttpClient` or a fetch
-  transport wrapped in Angular providers.
-- Whether Blob attachments are experimental in v1 or deferred entirely.
-- Retention period for consumed receipts and diagnostics.
-- API shape for lazy-loaded mutation-definition registration.
-- Whether encrypted storage is provided directly or only as a serializer port.
+Deferred extensions include SignalStore integration, lazy mutation-definition
+registration, attachments, custom protocol transports, storage encryption
+adapters, and a standalone queue inspector. They should be driven by real user
+requirements rather than expanding the alpha surface speculatively.
 
 These choices must not weaken the core invariants: durable-before-optimistic,
 scope isolation, stable operation versions, and server idempotency.
 
-## 27. Recommended First Implementation Slice
-
-Build one mutation end to end before adding generality:
-
-```text
-save Todo
-  -> enqueue in IndexedDB
-  -> dispatch queued
-  -> optimistic upsert
-  -> foreground POST with Idempotency-Key
-  -> retry across reload
-  -> write receipt
-  -> dispatch succeeded
-  -> replace client projection with server result
-```
-
-Then add, in order:
-
-1. permanent failure and blocked state;
-2. update with conflict detection;
-3. explicit parent reference;
-4. scope isolation;
-5. multi-tab locking;
-6. worker execution.
-
-This sequence validates each architectural boundary without beginning with the
-most operationally difficult browser feature.
-
-## 28. External References
+## 25. External References
 
 - NgRx Store: https://ngrx.io/guide/store
 - NgRx Effects: https://ngrx.io/guide/effects

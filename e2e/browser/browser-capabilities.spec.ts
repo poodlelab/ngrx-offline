@@ -5,37 +5,37 @@ test('serializes two pages through the IndexedDB lease when Web Locks are disabl
   page,
 }) => {
   await page.goto('/e2e/browser/foreground-fixture.html?reset&noLocks');
-  await page.waitForFunction(() => Boolean(window.phase3Ready));
-  await page.evaluate(() => window.phase3Fixture.queue());
+  await page.waitForFunction(() => Boolean(window.offlineFixtureReady));
+  await page.evaluate(() => window.offlineFixture.queue());
   const secondPage = await context.newPage();
   await secondPage.goto('/e2e/browser/foreground-fixture.html?noLocks');
-  await secondPage.waitForFunction(() => Boolean(window.phase3Ready));
+  await secondPage.waitForFunction(() => Boolean(window.offlineFixtureReady));
 
   await page.evaluate(() => {
-    window.phase3Fixture.setOnline(true);
-    window.phase3Fixture.holdTransport();
-    window.phase3Fixture.startSync();
+    window.offlineFixture.setOnline(true);
+    window.offlineFixture.holdTransport();
+    window.offlineFixture.startSync();
   });
   await expect
-    .poll(async () => (await page.evaluate(() => window.phase3Fixture.snapshot())).transportCalls)
+    .poll(async () => (await page.evaluate(() => window.offlineFixture.snapshot())).transportCalls)
     .toHaveLength(1);
   await secondPage.evaluate(() => {
-    window.phase3Fixture.setOnline(true);
-    window.phase3Fixture.startSync();
+    window.offlineFixture.setOnline(true);
+    window.offlineFixture.startSync();
   });
   await secondPage.waitForTimeout(75);
-  expect((await secondPage.evaluate(() => window.phase3Fixture.snapshot())).transportCalls).toEqual(
-    [],
-  );
+  expect(
+    (await secondPage.evaluate(() => window.offlineFixture.snapshot())).transportCalls,
+  ).toEqual([]);
 
-  await page.evaluate(() => window.phase3Fixture.releaseTransport());
+  await page.evaluate(() => window.offlineFixture.releaseTransport());
   await Promise.all([
-    page.evaluate(() => window.phase3Fixture.awaitSync()),
-    secondPage.evaluate(() => window.phase3Fixture.awaitSync()),
+    page.evaluate(() => window.offlineFixture.awaitSync()),
+    secondPage.evaluate(() => window.offlineFixture.awaitSync()),
   ]);
   const calls =
-    (await page.evaluate(() => window.phase3Fixture.snapshot())).transportCalls.length +
-    (await secondPage.evaluate(() => window.phase3Fixture.snapshot())).transportCalls.length;
+    (await page.evaluate(() => window.offlineFixture.snapshot())).transportCalls.length +
+    (await secondPage.evaluate(() => window.offlineFixture.snapshot())).transportCalls.length;
   expect(calls).toBe(1);
 });
 

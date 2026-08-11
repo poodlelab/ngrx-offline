@@ -162,7 +162,7 @@ try {
     );
     assert(
       Buffer.byteLength(bundle) < 20_000,
-      `The ${target.name} core-only bundle exceeded the 20 kB release-candidate budget.`,
+      `The ${target.name} core-only bundle exceeded the 20 kB package budget.`,
     );
   }
 } finally {
