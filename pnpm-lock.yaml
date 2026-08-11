@@ -84,8 +84,8 @@ importers:
         specifier: 28.1.0
         version: 28.1.0
       markdownlint-cli2:
-        specifier: 0.22.0
-        version: 0.22.0
+        specifier: 0.23.2
+        version: 0.23.2
       ng-packagr:
         specifier: 21.2.7
         version: 21.2.7(@angular/compiler-cli@21.2.19(@angular/compiler@21.2.19)(typescript@5.9.3))(tslib@2.8.1)(typescript@5.9.3)
@@ -2837,8 +2837,8 @@ packages:
     resolution: {integrity: sha512-jhIXaOzy1sb8IyocaruWSn1TjmnBVs8Ayhcy83rmxNJ8q2uWKCAj3CnJY+KpGSXCueAPc0i05kVvVKtP1t9S3g==}
     engines: {node: '>=10'}
 
-  globby@16.1.1:
-    resolution: {integrity: sha512-dW7vl+yiAJSp6aCekaVnVJxurRv7DCOLyXqEG3RYMYUg7AuJ2jCqPkZTA8ooqC2vtnkaMcV5WfFBMuEnTu1OQg==}
+  globby@16.2.2:
+    resolution: {integrity: sha512-NLvV9ubZ6NDsJaOpKPy3cQeJpKi9DcWiyCiFUpJPA0YihRqiE6RWaLUmgNNPr8MgPpLZjnBjSmou7uZBRJv9wA==}
     engines: {node: '>=20'}
 
   gopd@1.2.0:
@@ -3052,12 +3052,12 @@ packages:
     resolution: {integrity: sha512-S99WuO3HlhO3XN41EtYUNl9zzXjoJx7QvmipxsJVxtCBT0YHEFy+iOJhjSvrmV12nYhWpZaM8lPHkJm0yUMbag==}
     hasBin: true
 
-  js-yaml@4.1.1:
-    resolution: {integrity: sha512-qQKT4zQxXl8lLwBtHMWwaTcGfFOZviOJet3Oy/xmGk2gZH677CJM9EvtfdSkgWcATZhj/55JZ0rmy3myCT5lsA==}
-    hasBin: true
-
   js-yaml@4.3.1:
     resolution: {integrity: sha512-CY6crGq313MX8GkwvB7tzgp99vjQxY1++5y10/BKN/GUfHqWaOGQMNZkBvqSzsZKWk/ijwHlWzzkLulsGHhjWQ==}
+    hasBin: true
+
+  js-yaml@5.2.2:
+    resolution: {integrity: sha512-dayzUzKkJ1MkuUtZglSebU43utNXH0OWQByK9rKOOuYIO8M5TV1y+n8ALMdG0rdzBnfNkOmZEqrURepb0ejqBw==}
     hasBin: true
 
   jsdom@28.1.0:
@@ -3186,8 +3186,8 @@ packages:
     resolution: {integrity: sha512-Je0fLJ0F5atA7F+eIlLzk+Wkcl57JDf4kf+EW8xiP5E31xOQxkIxTbgf1Oi1Lw9tRI9UEMRdI5Vz2xTzoNU1Jw==}
     engines: {node: ^20.17.0 || >=22.9.0}
 
-  markdown-it@14.1.1:
-    resolution: {integrity: sha512-BuU2qnTti9YKgK5N+IeMubp14ZUKUUw7yeJbkjtosvHiP0AZ5c8IAgEMk79D0eC8F23r4Ac/q8cAIFdm2FtyoA==}
+  markdown-it@14.3.0:
+    resolution: {integrity: sha512-RCEsPjR+sr0x+AuYp601tKTkgFG4YEPLCzHST3cQ/fhlJkqAkz1L2/Qbp1j9qw5SBwQHFBoW8+hoN5xssOF0Tw==}
     hasBin: true
 
   markdownlint-cli2-formatter-default@0.0.6:
@@ -3195,14 +3195,14 @@ packages:
     peerDependencies:
       markdownlint-cli2: '>=0.0.4'
 
-  markdownlint-cli2@0.22.0:
-    resolution: {integrity: sha512-mOC9BY/XGtdX3M9n3AgERd79F0+S7w18yBBTNIQ453sI87etZfp1z4eajqSMV70CYjbxKe5ktKvT2HCpvcWx9w==}
-    engines: {node: '>=20'}
+  markdownlint-cli2@0.23.2:
+    resolution: {integrity: sha512-eUhcnkSpzURo/o4htSqc7LPDszgOOTknhU4eY/sPHvMCLxnTCYscv1gw1/js/idmaZPisv9ECVEIORcllqjTUw==}
+    engines: {node: '>=22'}
     hasBin: true
 
-  markdownlint@0.40.0:
-    resolution: {integrity: sha512-UKybllYNheWac61Ia7T6fzuQNDZimFIpCg2w6hHjgV1Qu0w1TV0LlSgryUGzM0bkKQCBhy2FDhEELB73Kb0kAg==}
-    engines: {node: '>=20'}
+  markdownlint@0.41.1:
+    resolution: {integrity: sha512-qHKeU2E1bdyNAT077go2FVTNXvYcktN5IHtF6XyeD1l0PClxzSp2tUApAV14ORI8DGX4H9bNKZEzelZp4qn8IA==}
+    engines: {node: '>=22'}
 
   marked-terminal@7.3.0:
     resolution: {integrity: sha512-t4rBvPsHc57uE/2nJOLmMbZCQ4tgAccAED3ngXQqW6g+TxA488JzJ+FK3lQkzBQOI1mRV/r/Kq+1ZlJ4D0owQw==}
@@ -3951,8 +3951,8 @@ packages:
     resolution: {integrity: sha512-94hK0Hh8rPqQl2xXc3HsaBoOXKV20MToPkcXvwbISWLEs+64sBq5kFgn2kJDHb1Pry9yrP0dxrCI9RRci7RXKg==}
     engines: {node: '>= 6.0.0', npm: '>= 3.0.0'}
 
-  smol-toml@1.6.0:
-    resolution: {integrity: sha512-4zemZi0HvTnYwLfrpk/CF9LOd9Lt87kAt50GnqhMpyF9U3poDAP2+iukq2bZsO/ufegbYehBkqINbsWxj4l4cw==}
+  smol-toml@1.7.0:
+    resolution: {integrity: sha512-aqVvWoyO21L23mb+drl4RmMXbf6N7FdHjAhTRA9ZBL7apWBgfWC16KjrASI+1p9GAroljyMHj6fK67i0UiTNvQ==}
     engines: {node: '>= 18'}
 
   socks-proxy-agent@8.0.5:
@@ -4026,8 +4026,8 @@ packages:
     resolution: {integrity: sha512-tsaTIkKW9b4N+AEj+SVA+WhJzV7/zMhcSu78mLKWSk7cXMOSHsBKFWUs0fWwq8QyK3MgJBQRX6Gbi4kYbdvGkQ==}
     engines: {node: '>=18'}
 
-  string-width@8.1.0:
-    resolution: {integrity: sha512-Kxl3KJGb/gxkaUMOjRsQ8IrXiGW75O4E3RPjFIINOVH8AMl2SQ/yWdTzWwF3FevIX9LcMAjJW+GRwAlAbTSXdg==}
+  string-width@8.2.1:
+    resolution: {integrity: sha512-IIaP0g3iy9Cyy18w3M9YcaDudujEAVHKt3a3QJg1+sr/oX96TbaGUubG0hJyCjCBThFH+tFpcIyoUHUn1ogaLA==}
     engines: {node: '>=20'}
 
   string-width@8.2.2:
@@ -7175,7 +7175,7 @@ snapshots:
       merge2: 1.4.1
       slash: 3.0.0
 
-  globby@16.1.1:
+  globby@16.2.2:
     dependencies:
       '@sindresorhus/merge-streams': 4.0.0
       fast-glob: 3.3.3
@@ -7364,11 +7364,11 @@ snapshots:
       argparse: 1.0.10
       esprima: 4.0.1
 
-  js-yaml@4.1.1:
+  js-yaml@4.3.1:
     dependencies:
       argparse: 2.0.1
 
-  js-yaml@4.3.1:
+  js-yaml@5.2.2:
     dependencies:
       argparse: 2.0.1
 
@@ -7547,7 +7547,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  markdown-it@14.1.1:
+  markdown-it@14.3.0:
     dependencies:
       argparse: 2.0.1
       entities: 4.5.0
@@ -7556,25 +7556,25 @@ snapshots:
       punycode.js: 2.3.1
       uc.micro: 2.1.0
 
-  markdownlint-cli2-formatter-default@0.0.6(markdownlint-cli2@0.22.0):
+  markdownlint-cli2-formatter-default@0.0.6(markdownlint-cli2@0.23.2):
     dependencies:
-      markdownlint-cli2: 0.22.0
+      markdownlint-cli2: 0.23.2
 
-  markdownlint-cli2@0.22.0:
+  markdownlint-cli2@0.23.2:
     dependencies:
-      globby: 16.1.1
-      js-yaml: 4.1.1
+      globby: 16.2.2
+      js-yaml: 5.2.2
       jsonc-parser: 3.3.1
       jsonpointer: 5.0.1
-      markdown-it: 14.1.1
-      markdownlint: 0.40.0
-      markdownlint-cli2-formatter-default: 0.0.6(markdownlint-cli2@0.22.0)
+      markdown-it: 14.3.0
+      markdownlint: 0.41.1
+      markdownlint-cli2-formatter-default: 0.0.6(markdownlint-cli2@0.23.2)
       micromatch: 4.0.8
-      smol-toml: 1.6.0
+      smol-toml: 1.7.0
     transitivePeerDependencies:
       - supports-color
 
-  markdownlint@0.40.0:
+  markdownlint@0.41.1:
     dependencies:
       micromark: 4.0.2
       micromark-core-commonmark: 2.0.3
@@ -7584,7 +7584,7 @@ snapshots:
       micromark-extension-gfm-table: 2.1.1
       micromark-extension-math: 3.1.0
       micromark-util-types: 2.0.2
-      string-width: 8.1.0
+      string-width: 8.2.1
     transitivePeerDependencies:
       - supports-color
 
@@ -8576,7 +8576,7 @@ snapshots:
 
   smart-buffer@4.2.0: {}
 
-  smol-toml@1.6.0: {}
+  smol-toml@1.7.0: {}
 
   socks-proxy-agent@8.0.5:
     dependencies:
@@ -8651,7 +8651,7 @@ snapshots:
       get-east-asian-width: 1.6.0
       strip-ansi: 7.2.0
 
-  string-width@8.1.0:
+  string-width@8.2.1:
     dependencies:
       get-east-asian-width: 1.6.0
       strip-ansi: 7.2.0
