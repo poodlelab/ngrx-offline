@@ -73,13 +73,13 @@ Pages origin.
 
 ## Runtime configuration
 
-| Setting                    | Default   | Purpose                                     |
-| -------------------------- | --------- | ------------------------------------------- |
-| `API_VERSION`              | `0.1.0`   | Reported contract/service version           |
-| `GITHUB_PAGES_ORIGIN`      | travelDay | Exact production browser origin             |
-| `WORKSPACE_RETENTION_DAYS` | `7`       | Sliding demo-workspace lifetime             |
-| `REQUESTS_PER_MINUTE`      | `150`     | Per-workspace fixed-window request budget   |
-| `SECRET_HASH_KEY`          | secret    | HMAC key used to protect capability secrets |
+| Setting                    | Default    | Purpose                                     |
+| -------------------------- | ---------- | ------------------------------------------- |
+| `API_VERSION`              | `0.1.0`    | Reported contract/service version           |
+| `GITHUB_PAGES_ORIGIN`      | configured | Exact production browser origin             |
+| `WORKSPACE_RETENTION_DAYS` | `7`        | Sliding demo-workspace lifetime             |
+| `REQUESTS_PER_MINUTE`      | `150`      | Per-workspace fixed-window request budget   |
+| `SECRET_HASH_KEY`          | secret     | HMAC key used to protect capability secrets |
 
 Optional environment variables can lower individual domain and test-behavior
 quotas; see `src/env-extensions.d.ts`. The hourly cron deletes expired

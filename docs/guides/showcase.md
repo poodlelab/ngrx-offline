@@ -96,7 +96,7 @@ The production API base can be supplied before the main bundle runs:
 ```html
 <script>
   window.__NGRX_OFFLINE_CONFIG__ = {
-    apiBaseUrl: 'https://ngrx-offline-demo-api.example.workers.dev',
+    apiBaseUrl: 'https://ngrx-offline-demo-api.poodlelab.workers.dev',
   };
 </script>
 ```

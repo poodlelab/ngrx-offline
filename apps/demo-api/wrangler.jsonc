@@ -3,6 +3,8 @@
   "name": "ngrx-offline-demo-api",
   "main": "src/index.ts",
   "compatibility_date": "2026-08-10",
+  "workers_dev": true,
+  "preview_urls": false,
   "observability": { "enabled": true, "head_sampling_rate": 1 },
   "vars": {
     "API_VERSION": "0.1.0",
@@ -14,7 +16,7 @@
     {
       "binding": "DB",
       "database_name": "ngrx-offline-demo",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "b22543bd-f72f-4e04-9ec8-740c5797b628",
       "migrations_dir": "migrations",
     },
   ],
