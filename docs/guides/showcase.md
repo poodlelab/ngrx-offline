@@ -5,6 +5,9 @@ outbox. It uses a connected travel story because a single-record todo list canno
 demonstrate offline references, dependency ordering, ID reconciliation, or
 domain conflicts.
 
+[Open the deployed showcase](https://poodlelab.github.io/ngrx-offline/). It uses
+an anonymous test-data pool; do not enter personal or confidential information.
+
 ## Reviewed interface captures
 
 ![Atlas Journal overview in the light theme](../screenshots/atlas-journal-overview-light.png)

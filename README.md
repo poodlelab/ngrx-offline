@@ -3,6 +3,10 @@
 Durable, optimistic, offline mutation handling for Angular applications that
 use NgRx.
 
+[Live Atlas Journal showcase](https://poodlelab.github.io/ngrx-offline/) ·
+[Documentation](./docs/guides/README.md) ·
+[npm package](https://www.npmjs.com/package/@poodlelab/ngrx-offline)
+
 > [!IMPORTANT]
 > **Alpha status.** NgRx Offline is ready for evaluation, but it is not yet
 > recommended for production use. Public APIs may change before 1.0. If it
@@ -35,11 +39,12 @@ event is emitted.
 - IndexedDB persistence and foreground Angular/NgRx integration: complete
 - Relations, multi-tab hardening, and worker replay: complete
 - Browser hardening and release-candidate package validation: complete
-- Isolated Cloudflare Worker/D1 reference API: complete and deployment-ready
+- Isolated Cloudflare Worker/D1 reference API: deployed for the live showcase
 - npm package: [`@poodlelab/ngrx-offline@0.1.0-alpha.0`](https://www.npmjs.com/package/@poodlelab/ngrx-offline/v/0.1.0-alpha.0)
-- Atlas Journal showcase: complete and deployment-ready
+- Atlas Journal showcase: [live on GitHub Pages](https://poodlelab.github.io/ngrx-offline/)
 
-See the [technical concept](./CONCEPT.md) and the [documentation](./docs/README.md).
+See the [technical concept](./CONCEPT.md) and the
+[documentation](./docs/guides/README.md).
 
 The framework-independent API and test harness are introduced in the
 [core engine guide](./docs/guides/core-engine.md).

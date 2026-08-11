@@ -3,6 +3,8 @@
 Durable, optimistic, offline mutation handling for Angular applications that
 use NgRx.
 
+[Try the live Atlas Journal showcase](https://poodlelab.github.io/ngrx-offline/).
+
 Most offline support stops at caching screens or retrying one request. Real
 applications also need to create related records before server IDs exist. NgRx
 Offline persists those mutations and resolves their local references during
