@@ -36,7 +36,7 @@ event is emitted.
 - Relations, multi-tab hardening, and worker replay: complete
 - Browser hardening and release-candidate package validation: complete
 - Isolated Cloudflare Worker/D1 reference API: complete and deployment-ready
-- npm package: alpha release prepared
+- npm package: [`@poodlelab/ngrx-offline@0.1.0-alpha.0`](https://www.npmjs.com/package/@poodlelab/ngrx-offline/v/0.1.0-alpha.0)
 - Atlas Journal showcase: complete and deployment-ready
 
 See the [technical concept](./CONCEPT.md) and the [documentation](./docs/README.md).
