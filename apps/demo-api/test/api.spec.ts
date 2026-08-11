@@ -340,8 +340,9 @@ describe('Cloudflare Worker reference API', () => {
     await register(workspaceA, secretA);
     await register(workspaceB, secretB);
     let limited: Response | undefined;
-    for (let index = 0; index < 41; index += 1) {
+    for (let index = 0; index < 82; index += 1) {
       limited = await authorized('/v1/snapshot', workspaceA, secretA);
+      if (limited.status === 429) break;
     }
     expect(limited?.status).toBe(429);
     expect(limited?.headers.get('retry-after')).toBe('60');

@@ -577,8 +577,8 @@ export const offlineOutboxFeature: {
     name: "ngrxOfflineOutbox";
     reducer: _ngrx_store.ActionReducer<OfflineOutboxState, _ngrx_store.Action<string>>;
     selectNgrxOfflineOutboxState: _ngrx_store.MemoizedSelector<Record<string, any>, OfflineOutboxState, (featureState: OfflineOutboxState) => OfflineOutboxState>;
-    selectOperations: _ngrx_store.MemoizedSelector<Record<string, any>, Readonly<Record<string, OfflineOperationSummary>>, (featureState: OfflineOutboxState) => Readonly<Record<string, OfflineOperationSummary>>>;
     selectHydrated: _ngrx_store.MemoizedSelector<Record<string, any>, boolean, (featureState: OfflineOutboxState) => boolean>;
+    selectOperations: _ngrx_store.MemoizedSelector<Record<string, any>, Readonly<Record<string, OfflineOperationSummary>>, (featureState: OfflineOutboxState) => Readonly<Record<string, OfflineOperationSummary>>>;
     selectSyncing: _ngrx_store.MemoizedSelector<Record<string, any>, boolean, (featureState: OfflineOutboxState) => boolean>;
     selectActiveScope: _ngrx_store.MemoizedSelector<Record<string, any>, string | null, (featureState: OfflineOutboxState) => string | null>;
     selectPendingCount: _ngrx_store.MemoizedSelector<Record<string, any>, number, (featureState: OfflineOutboxState) => number>;

@@ -108,10 +108,10 @@ jobs:
           "ng-packagr@$NG_PACKAGR_VERSION"
 
       - name: Build package
-        run: pnpm build
+        run: pnpm build:library
 
       - name: Run unit tests
-        run: pnpm test
+        run: pnpm test:library
 
   browser:
     name: Foreground browser replay
