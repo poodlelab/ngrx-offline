@@ -56,7 +56,7 @@
     "@angular/build": "21.2.20",
     "@angular/cli": "21.2.20",
     "@angular/common": "21.2.19",
-    "@angular/compiler": "21.2.19",
+    "@angular/compiler": "21.2.20",
     "@angular/compiler-cli": "21.2.19",
     "@angular/core": "21.2.19",
     "@angular/platform-browser": "21.2.19",
